@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Configuración</ion-title>
+    <!--Back button top left-->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="config-card">
+    <form #FProducto="ngForm" (ngSubmit)="FormSubmit()">
+      <!--Field for Ip config-->
+      <ion-form-field class="example-full-width">
+        <ion-Input [(ngModel)]="IP" type="text"   name="ip" placeholder="Introducir IP servidor">
+      </ion-form-field>      
+      <button type="submit" mat-raised-button color="primary">
+        <ion-icon>cloud_upload</ion-icon>
+      </button>
+    </form>
+  </ion-card>
+</ion-content>
+
+
+

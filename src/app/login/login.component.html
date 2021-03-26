@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      <ion-button (click)="irConfig()"size="small">config</ion-button>
+      <ion-content >
+        <ion-button  >config</ion-button>
+      </ion-content>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>  
+  <ion-card class="login-card">
+    <form  (ngSubmit)="logIn()">
+      <ion-item>
+        <ion-input  [(ngModel)]="user" type="text" name="usuario" placeholder="Nombre Usuario"></ion-input>            
+    </ion-item>
+    <ion-item>
+        <ion-input [(ngModel)]="pwd" type="password" name="passwd" placeholder="Contraseña"></ion-input>      
+    </ion-item>
+    <ion-button type="submit" mat-raised-button color="primary">guardar</ion-button>
+    </form>
+  </ion-card>
+</ion-content>
