@@ -3,19 +3,22 @@
     <ion-title>
       Lista neveras
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logOut()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
+
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
-
   <ion-item>
     <ion-label>Fecha:</ion-label>
     <ion-datetime displayFormat="YYYY-MM-DD" [max]="todayDate" [value]="todayDate" (ionChange)="updateDay($event)">
     </ion-datetime>
   </ion-item>
   <ion-item-divider></ion-item-divider>
-
   <ion-list *ngFor="let dia of (diesVista)">
     <ion-item lines="full">
       <ion-label>Id de la nevera: {{dia.idNevera}}</ion-label>

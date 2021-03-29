@@ -8,7 +8,7 @@ import { NeveraService } from '../services/nevera.service';
 import { StoragesessionService } from '../services/storagesession.service';
 import { UsuarisService } from '../services/usuaris.service';
 import { formatDate } from '@angular/common';
-import { ToastController } from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -18,13 +18,13 @@ import { ToastController } from '@ionic/angular';
 export class GestioNevComponent implements OnInit {
   private todayDate;
   errorMessage = '';
-  public neveres: nevera[];
-  public dies$ = new Subject<dies[]>();
-  public user: usuaris[];
-  public session: any[];
-  public dies: dies[];
-  public diesVista: dies[] = [];
-  public dia: dies;
+  private neveres: nevera[];
+  private dies$ = new Subject<dies[]>();
+  private user: usuaris[];
+  private session: any[];
+  private dies: dies[];
+  private diesVista: dies[] = [];
+  private dia: dies;
   private myCon: Subscription;
 
   constructor(
@@ -32,7 +32,8 @@ export class GestioNevComponent implements OnInit {
     private NeveraService: NeveraService,
     private UsuariService: UsuarisService,
     private StgSesion: StoragesessionService,
-    public toastController: ToastController
+    private toastController: ToastController,
+    private popoverCtrl: PopoverController
   ) {
     this;
   }
@@ -86,7 +87,9 @@ export class GestioNevComponent implements OnInit {
       error: (err) => (this.errorMessage = err),
     });
   }
-
+  logOut() {
+    this.StgSesion.setSessionLoggedOut();
+  }
   //Metode que se ejectua quan es canvia de dia amb el datePicker
   updateDay($event) {
     const date: String = $event.detail.value.slice(0, 10);
