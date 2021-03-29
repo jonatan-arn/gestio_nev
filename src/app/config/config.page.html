@@ -12,15 +12,13 @@
   <ion-card class="config-card">
     <form #FProducto="ngForm" (ngSubmit)="FormSubmit()">
       <!--Field for Ip config-->
-      <ion-form-field class="example-full-width">
-        <ion-Input [(ngModel)]="IP" type="text"   name="ip" placeholder="Introducir IP servidor">
-      </ion-form-field>      
-      <button type="submit" mat-raised-button color="primary">
-        <ion-icon>cloud_upload</ion-icon>
-      </button>
+      <ion-item>
+        <ion-Input [(ngModel)]="IP" type="text" name="ip" placeholder="Introducir IP servidor">
+        </ion-Input>
+      </ion-item>
+      <ion-item>
+        <ion-button type="submit">Guardar</ion-button>
+      </ion-item>
     </form>
   </ion-card>
 </ion-content>
-
-
-
