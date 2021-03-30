@@ -8,7 +8,8 @@ import { NeveraService } from '../services/nevera.service';
 import { StoragesessionService } from '../services/storagesession.service';
 import { UsuarisService } from '../services/usuaris.service';
 import { formatDate } from '@angular/common';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -17,6 +18,7 @@ import { PopoverController, ToastController } from '@ionic/angular';
 })
 export class GestioNevComponent implements OnInit {
   private todayDate;
+  private yesterdayDate;
   errorMessage = '';
   private neveres: nevera[];
   private dies$ = new Subject<dies[]>();
@@ -26,14 +28,15 @@ export class GestioNevComponent implements OnInit {
   private diesVista: dies[] = [];
   private dia: dies;
   private myCon: Subscription;
-
+  private check: boolean;
+  private alertS: boolean = false;
   constructor(
     private DiesService: DiesService,
     private NeveraService: NeveraService,
     private UsuariService: UsuarisService,
     private StgSesion: StoragesessionService,
     private toastController: ToastController,
-    private popoverCtrl: PopoverController
+    private alertController: AlertController
   ) {
     this;
   }
@@ -46,6 +49,11 @@ export class GestioNevComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.yesterdayDate = new Date();
+    this.yesterdayDate = new Date(
+      this.yesterdayDate.setDate(this.yesterdayDate.getDate() - 1)
+    );
+    this.yesterdayDate = formatDate(this.yesterdayDate, 'yyyy-MM-dd', 'en');
     this.todayDate = formatDate(new Date(), 'yyyy-MM-dd', 'en');
     this.session = this.StgSesion.getSessionLoggedIn();
     //Se accedeix a la base de dades amb el metode getUsuaria pasant-li de parametre el nom guardat en local
@@ -58,12 +66,43 @@ export class GestioNevComponent implements OnInit {
         this.neveres = neveraToAJSON(res);
         for (let nev of this.neveres) {
           //Se recorren totes les neveres i se agafen els dies on estara la temperatura de aquest pasat-li el dia actual
-          this.getDies(nev, formatDate(new Date(), 'yyyy-MM-dd', 'en'));
+          this.getYesterdayDies(nev, this.yesterdayDate);
+          this.getDies(nev, this.todayDate);
         }
       });
     });
   }
 
+  getYesterdayDies(nev: nevera, fecha) {
+    this.myCon = this.DiesService.getDiesByNevera_Fecha(
+      nev.id,
+      fecha
+    ).subscribe({
+      next: (dia) => {
+        if (diesToAJSON(dia).length == 0) {
+          this.check = true;
+          if (this.alertS == false) {
+            this.alertTemp();
+            this.alertS = true;
+          }
+        } else {
+          this.check = false;
+        }
+      },
+
+      error: (err) => (this.errorMessage = err),
+    });
+  }
+  async alertTemp() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Error',
+      message: 'Las temperaturas de ayer no estan introducidas, introducelas.',
+      buttons: ['OK'],
+    });
+
+    await alert.present();
+  }
   //Metode que rep una nevera i un dia
   getDies(nev: nevera, fecha) {
     //Se busquen els dies per nevera i per fecha
@@ -94,6 +133,7 @@ export class GestioNevComponent implements OnInit {
   updateDay($event) {
     const date: String = $event.detail.value.slice(0, 10);
     this.diesVista = [];
+    this.check = false;
     for (let nev of this.neveres) {
       //Recorre totes les neveres i executa el metode getDies amb la data del datePicker
       this.getDies(nev, date);

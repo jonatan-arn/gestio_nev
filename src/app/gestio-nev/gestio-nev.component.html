@@ -25,7 +25,7 @@
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Temperatura de la nevera: </ion-label>
-      <ion-input [(ngModel)]="dia.temperatura" type="text"></ion-input>
+      <ion-input [(ngModel)]="dia.temperatura" type="text" disabled="{{check}}"></ion-input>
     </ion-item>
   </ion-list>
   <ion-button (click)="updateTemp()" size="small" expand="block">Guardar</ion-button>
