@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { UsuarisService } from './usuaris.service';
+import { UsuarisService } from './BM_usuaris.service';
 import { Router } from '@angular/router';
 import { StoragesessionService } from './storagesession.service';
-import { usuarisToAJSON } from '../models/usuaris';
 import { AlertController } from '@ionic/angular';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,30 +13,39 @@ export class LoginService {
     private api: UsuarisService,
     private router: Router,
     private StgSesion: StoragesessionService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private auth: AuthService,
+    private UsuariService: UsuarisService
   ) {}
 
   rdo = false;
   Usuari: any;
 
-  login(user: string, password: string) {
+  async login(email, password) {
     this.StgSesion.setSessionLoggedOut();
-    this.api.getUsuari(user).subscribe(
-      (res) => {
-        this.Usuari = usuarisToAJSON(res);
-        if (this.Usuari.length > 0) {
-          if (password == this.Usuari[0].password) {
+
+    try {
+      const user = this.UsuariService.getUsuari(email);
+
+      //const user = await this.auth.login(email, password);
+
+      user.subscribe((res) => {
+        if (res.length != 0) {
+          if (res[0].BM_password == password) {
             let token = 'token';
-            let u = { username: user, token: token };
+            let u = { username: email, token: token };
             this.StgSesion.setSessionLogedIn(u);
             this.router.navigateByUrl('/home');
           } else {
             this.loginAlert();
           }
+        } else {
+          this.loginAlert();
         }
-      },
-      (err) => {}
-    );
+      });
+    } catch (error) {
+      console.log('Error->', error);
+    }
   }
 
   async loginAlert() {
