@@ -1,3 +1,19 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="first" contentId="main">
+  
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menu Principal</ion-title>
+      </ion-toolbar>
+    </ion-header>
+  
+    <ion-content>
+      <ion-list>
+        <ion-item [routerLink]="['/home']">Gestión de temperaturas</ion-item>
+        <ion-item [routerLink]="['/formulari']">Creación de pdf</ion-item>
+      </ion-list>
+    </ion-content>
+  
+  </ion-menu>
+  <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>

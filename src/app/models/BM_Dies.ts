@@ -2,7 +2,7 @@ export class dies {
   id: string;
   BM_dia: string;
   BM_temperatura: number;
-  BM_idNevera: number;
+  BM_idNevera: any;
 }
 
 export class NewDia {
@@ -10,7 +10,7 @@ export class NewDia {
     BM_id: number,
     BM_dia: string,
     BM_temperatura: number,
-    BM_idNevera: number
+    BM_idNevera: any
   ) {}
 }
 

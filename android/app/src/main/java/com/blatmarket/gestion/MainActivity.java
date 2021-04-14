@@ -1,4 +1,4 @@
-package com.prova.gestionevera;
+package com.blatmarket.gestion;
 
 import android.os.Bundle;
 

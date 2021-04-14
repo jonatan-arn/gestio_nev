@@ -47,7 +47,6 @@ export class DiesService {
       ss.docs.forEach((doc) => {
         this.dia.push(doc.data().BM_dia);
         this.dia.push(doc.id);
-        console.log(this.dia[0]);
       });
     });
   }

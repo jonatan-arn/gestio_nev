@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "759206631391",
-    "firebase_url": "https://testnev-17026-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "testnev-17026",
-    "storage_bucket": "testnev-17026.appspot.com"
+    "project_number": "691996748740",
+    "project_id": "gestionblatmarket",
+    "storage_bucket": "gestionblatmarket.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:759206631391:android:f973d12241ce57a21f966a",
+        "mobilesdk_app_id": "1:691996748740:android:5f7b97046932f714539291",
         "android_client_info": {
-          "package_name": "com.prova.gestionevera"
+          "package_name": "com.blatmarket.gestion"
         }
       },
       "oauth_client": [
         {
-          "client_id": "759206631391-i7a8kceevj2q78sopq307uh14551u45k.apps.googleusercontent.com",
+          "client_id": "691996748740-qj5dhg6cgeb71f77c0qaed3aq6r3qn8q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCDC-A6NpTGx9dvO2YbYFY0moIE07R9xZs"
+          "current_key": "AIzaSyCikzbDKDBIpcMh4a0QGEum0rbQRX_kxE4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "759206631391-i7a8kceevj2q78sopq307uh14551u45k.apps.googleusercontent.com",
+              "client_id": "691996748740-qj5dhg6cgeb71f77c0qaed3aq6r3qn8q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

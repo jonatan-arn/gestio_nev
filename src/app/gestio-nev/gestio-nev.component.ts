@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
 import { dies, NuevoDia } from '../models/BM_Dies';
 import { nevera } from '../models/BM_Nevera';
-import { usuaris } from '../models/BM_usuaris';
 import { DiesService } from '../services/BM_Dies.service';
 import { NeveraService } from '../services/BM_Nevera.service';
 import { StoragesessionService } from '../services/storagesession.service';
 import { UsuarisService } from '../services/BM_usuaris.service';
 import { formatDate } from '@angular/common';
-import { ToastController } from '@ionic/angular';
+import { MenuController, ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
-import { Timestamp } from 'rxjs/internal/operators/timestamp';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -32,19 +29,19 @@ export class GestioNevComponent implements OnInit {
     private UsuariService: UsuarisService,
     private StgSesion: StoragesessionService,
     private toastController: ToastController,
-    private alertController: AlertController
-  ) {
-    this;
-  }
+    private alertController: AlertController,
+    private menu: MenuController
+  ) {}
   async presentToast() {
     const toast = await this.toastController.create({
-      message: 'Temperatura guardada correctament',
+      message: 'Temperatura guardada correctamente',
       duration: 2000,
     });
     toast.present();
   }
 
   ngOnInit(): void {
+    this.menu.enable(true);
     this.yesterdayDate = new Date();
     this.yesterdayDate = new Date(
       this.yesterdayDate.setDate(this.yesterdayDate.getDate() - 1)
@@ -60,7 +57,18 @@ export class GestioNevComponent implements OnInit {
       this.NeveraService.getNeveresbyLocalitat(res[0].BM_idLocalitat).subscribe(
         (nev) => {
           this.neveres = nev;
-
+          //Ordenar las neveras para la vista
+          this.neveres = this.neveres.sort((t1, t2) => {
+            const name1 = t1.BM_id;
+            const name2 = t2.BM_id;
+            if (name1 > name2) {
+              return 1;
+            }
+            if (name1 < name2) {
+              return -1;
+            }
+            return 0;
+          });
           this.getDies(this.neveres, this.todayDate);
           this.getYesterdayDies(this.neveres, this.yesterdayDate);
         }
@@ -88,19 +96,6 @@ export class GestioNevComponent implements OnInit {
             }
           });
         });
-      /* this.DiesService.getDiesByNevera_Fecha(n.BM_id, fecha).get().subscribe(
-        (res) => {
-          if (res.length == 0) {
-            this.check = true;
-            if (this.alertS == false) {
-              this.alertTemp();
-              this.alertS = true;
-            }
-          } else {
-            this.check = false;
-          }
-        }
-      );*/
     }
   }
   async alertTemp() {
@@ -158,5 +153,8 @@ export class GestioNevComponent implements OnInit {
     });
     this.presentToast();
     console.log(this.diesVista);
+  }
+  openMenu() {
+    this.menu.toggle();
   }
 }

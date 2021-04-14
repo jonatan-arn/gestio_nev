@@ -1,6 +1,6 @@
 {
-  "appId": "com.prova.gestionevera",
-  "appName": "gestionevera",
+  "appId": "com.blatmarket.gestion",
+  "appName": "GestionBlatMarket",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
