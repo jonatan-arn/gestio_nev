@@ -11,6 +11,8 @@ import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { CalendarModule } from 'ion2-calendar';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
 
 @NgModule({
   declarations: [AppComponent, Components],
@@ -26,7 +28,12 @@ import { CalendarModule } from 'ion2-calendar';
     AngularFirestoreModule,
     CalendarModule,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    EmailComposer,
+    FileOpener,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  ],
+
   bootstrap: [AppComponent],
 })
 export class AppModule {}

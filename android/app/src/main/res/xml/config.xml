@@ -14,5 +14,9 @@
     <param name="android-package" value="io.github.pwlin.cordova.plugins.fileopener2.FileOpener2"/>
   </feature>
 
+  <feature name="EmailComposer">
+    <param name="android-package" value="de.martinreinhardt.cordova.plugins.email.EmailComposer"/>
+  </feature>
+
   
 </widget>

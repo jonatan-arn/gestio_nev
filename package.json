@@ -23,8 +23,9 @@
     "@capacitor/android": "^2.4.7",
     "@capacitor/core": "^2.4.7",
     "@ionic-native/core": "^5.32.0",
-    "@ionic-native/email-composer": "^5.31.1",
-    "@ionic-native/file-opener": "^5.32.0",
+    "@ionic-native/email-composer": "^5.32.1",
+    "@ionic-native/file": "^5.0.0-beta.21",
+    "@ionic-native/file-opener": "^5.0.0-beta.21",
     "@ionic/angular": "^5.5.2",
     "@ionic/pwa-elements": "^3.0.2",
     "cordova-plugin-calendar": "^5.1.5",
@@ -52,6 +53,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
+    "cordova-plugin-email": "^1.2.7",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.2.0",
@@ -65,5 +67,12 @@
     "tslint": "~6.1.0",
     "typescript": "~4.0.2"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-file-opener2": {},
+      "cordova-plugin-email-composer": {},
+      "cordova-plugin-email": {}
+    }
+  }
 }

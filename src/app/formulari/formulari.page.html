@@ -3,16 +3,14 @@
     <ion-button slot="start">
       <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
     </ion-button>
-    <ion-title>formulari</ion-title>
+    <ion-title>Exportar Temperaturas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   
-  <ion-calendar [(ngModel)]="dateRange" [options]="optionsRange" [type]="type" [format]="'YYYY-MM-DD'">
-  </ion-calendar>
+<ion-button expand="full" (click)="openCalendar()" color="secondary">Seleccionar las fechas</ion-button>
 
-<ion-button expand="full" (click)="generatePDF()" color="secondary">Generar PDF</ion-button>
+<ion-button expand="full" (click)="generatePDF()" color="secondary" disabled="{{check}}">Generar PDF</ion-button>
 
-<ion-button expand="full" (click)="dowloadPDF()" color="secondary" >Guarda PDF</ion-button> 
 </ion-content>

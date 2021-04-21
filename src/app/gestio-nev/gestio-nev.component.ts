@@ -8,6 +8,9 @@ import { UsuarisService } from '../services/BM_usuaris.service';
 import { formatDate } from '@angular/common';
 import { MenuController, ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import { localitat } from '../models/BM_Localitat';
+import { LocalitatService } from '../services/BM_Localitat.service';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -20,9 +23,14 @@ export class GestioNevComponent implements OnInit {
   errorMessage = '';
   private neveres: nevera[];
   private diesVista: dies[] = [];
+  private diesVistaAux: dies[] = [];
+  private localitat: localitat[];
+
   private dia: dies;
   private check: boolean;
   private alertS: boolean = false;
+  private date;
+
   constructor(
     private DiesService: DiesService,
     private NeveraService: NeveraService,
@@ -30,7 +38,9 @@ export class GestioNevComponent implements OnInit {
     private StgSesion: StoragesessionService,
     private toastController: ToastController,
     private alertController: AlertController,
-    private menu: MenuController
+    private menu: MenuController,
+    private emailComposer: EmailComposer,
+    private LocalitatService: LocalitatService
   ) {}
   async presentToast() {
     const toast = await this.toastController.create({
@@ -73,6 +83,11 @@ export class GestioNevComponent implements OnInit {
           this.getYesterdayDies(this.neveres, this.yesterdayDate);
         }
       );
+      this.LocalitatService.getLocalitat(res[0].BM_idLocalitat).subscribe(
+        (loc) => {
+          this.localitat = loc;
+        }
+      );
     });
   }
 
@@ -85,7 +100,9 @@ export class GestioNevComponent implements OnInit {
           if (res.empty) {
             this.check = true;
             if (this.alertS == false) {
-              this.alertTemp();
+              this.alertTemp(
+                'Las temperaturas de ayer no estan introducidas, introducelas.'
+              );
               this.alertS = true;
             }
           } else {
@@ -98,11 +115,11 @@ export class GestioNevComponent implements OnInit {
         });
     }
   }
-  async alertTemp() {
+  async alertTemp(s) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Error',
-      message: 'Las temperaturas de ayer no estan introducidas, introducelas.',
+      message: s,
       buttons: ['OK'],
     });
 
@@ -140,6 +157,7 @@ export class GestioNevComponent implements OnInit {
     const date: String = $event.detail.value.slice(0, 10);
     this.diesVista = [];
     this.check = false;
+    this.date = date;
     //Recorre totes les neveres i executa el metode getDies amb la data del datePicker
     this.getDies(this.neveres, date);
   }
@@ -147,14 +165,99 @@ export class GestioNevComponent implements OnInit {
   //Metode per actualitza la temperatura introduida per el usuari a la BD
   updateTemp() {
     //Recorrec els dies de la vista
-    console.log(this.diesVista);
+    let c = true;
     this.diesVista.forEach((valor, posicion, array) => {
-      this.DiesService.addDia(valor);
+      if (valor.BM_temperatura == null) {
+        c = false;
+      } else {
+        this.date = valor.BM_dia;
+        this.DiesService.addDia(valor);
+      }
     });
-    this.presentToast();
-    console.log(this.diesVista);
+
+    if (c) {
+      this.presentToast();
+      this.changeName();
+      this.checkTemp();
+    } else {
+      this.alertTemp('Alguna temperatura no ha sido introducida');
+    }
   }
   openMenu() {
     this.menu.toggle();
+  }
+  changeName() {
+    this.diesVistaAux = [];
+    this.diesVista.forEach((val) =>
+      this.diesVistaAux.push(Object.assign({}, val))
+    );
+    this.diesVistaAux.forEach((valor, posicion, array) => {
+      this.neveres.forEach((nev) => {
+        if (valor.BM_idNevera == nev.BM_id) {
+          this.diesVistaAux[posicion].BM_idNevera = nev.BM_nomNevera;
+        }
+      });
+    });
+  }
+  checkTemp() {
+    let send = false;
+    let s = '';
+    for (let valor of this.diesVistaAux) {
+      console.log(valor.BM_idNevera);
+      console.log(valor.BM_temperatura);
+      if (
+        valor.BM_idNevera.includes('Nevera Abierta') ||
+        valor.BM_idNevera.includes('Nevera Cerrada') ||
+        valor.BM_idNevera.includes('Danone') ||
+        valor.BM_idNevera.includes('Nevera Extra')
+      ) {
+        if (valor.BM_temperatura > 5 || valor.BM_temperatura < 0) {
+          send = true;
+          (s =
+            s +
+            'Temperatura anomala de ' +
+            valor.BM_temperatura +
+            ' de ' +
+            valor.BM_idNevera +
+            '.'),
+            ' \n';
+          //Si es nevera envia correo
+        }
+      } else if (
+        valor.BM_idNevera.includes('Isla') ||
+        valor.BM_idNevera.includes('Arcón') ||
+        valor.BM_idNevera.includes('Nestlé') ||
+        valor.BM_idNevera.includes('Dulcesol') ||
+        valor.BM_idNevera.includes('Hielo') ||
+        valor.BM_idNevera.includes('Nevera Extra')
+      ) {
+        if (valor.BM_temperatura > -12 || valor.BM_temperatura < -25) {
+          send = true;
+
+          (s =
+            s +
+            'Temperatura anomala de ' +
+            valor.BM_temperatura +
+            ' de  ' +
+            valor.BM_idNevera +
+            '.'),
+            ' \n';
+        }
+      }
+    }
+
+    if (send) this.sendMail(s);
+  }
+  sendMail(temperatura) {
+    let email = {
+      to: this.localitat[0].BM_Poblacio + '@blatmarket.com',
+      cc: '',
+      subject: 'Temperaturas anomalas de: ' + this.date,
+      body: temperatura,
+      isHtml: false,
+    };
+
+    // Send a text message using default options
+    this.emailComposer.open(email);
   }
 }
