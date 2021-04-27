@@ -209,7 +209,7 @@ export class GestioNevComponent implements OnInit {
         valor.BM_idNevera.includes('Nevera Abierta') ||
         valor.BM_idNevera.includes('Nevera Cerrada') ||
         valor.BM_idNevera.includes('Danone') ||
-        valor.BM_idNevera.includes('Nevera Extra')
+        valor.BM_idNevera.includes('Nevera Extra+')
       ) {
         if (valor.BM_temperatura > 5 || valor.BM_temperatura < 0) {
           send = true;
@@ -229,7 +229,7 @@ export class GestioNevComponent implements OnInit {
         valor.BM_idNevera.includes('Nestlé') ||
         valor.BM_idNevera.includes('Dulcesol') ||
         valor.BM_idNevera.includes('Hielo') ||
-        valor.BM_idNevera.includes('Nevera Extra')
+        valor.BM_idNevera.includes('Nevera Extra-')
       ) {
         if (valor.BM_temperatura > -12 || valor.BM_temperatura < -25) {
           send = true;
