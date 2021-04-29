@@ -9,10 +9,11 @@ import { Isession } from '../models/Isession';
 export class StoragesessionService {
   private isUserLoggedIn: boolean = false;
   public sessionLogged: Isession;
-
+  private isUserAdmin: boolean = false;
   constructor(private router: Router) {}
 
-  setSessionLogedIn(session: Isession) {
+  setSessionLogedIn(session: Isession, isAdmin: boolean) {
+    this.isUserAdmin = isAdmin;
     this.isUserLoggedIn = true;
     this.sessionLogged = session;
     sessionStorage.setItem('currentUser', JSON.stringify(session));
@@ -26,6 +27,9 @@ export class StoragesessionService {
   }
   isAuthenticated(): boolean {
     return this.isUserLoggedIn;
+  }
+  isAdmin(): boolean {
+    return this.isUserAdmin;
   }
 
   setSessionLoggedOut() {

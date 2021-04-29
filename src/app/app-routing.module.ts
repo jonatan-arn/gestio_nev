@@ -1,11 +1,15 @@
 import { Component, NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './views/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
-import { GestioNevComponent } from './gestio-nev/gestio-nev.component';
-import { ConfigPage } from './config/config.page';
-import { MenuPage } from './menu/menu.page';
-import { FormulariPage } from './formulari/formulari.page';
+import { GestioNevComponent } from './views/gestio-nev/gestio-nev.component';
+import { ConfigPage } from './views/config/config.page';
+import { FormulariPage } from './views/formulari/formulari.page';
+import { AuditoriesPage } from './views/auditories/auditories.page';
+import { AuthGuardAdmin } from './guards/auth.guard admin';
+import { AuditoriesFormPage } from './views/auditories-form/auditories-form.page';
+import { PreguntaPageRoutingModule } from './views/pregunta/pregunta-routing.module';
+import { PreguntaPage } from './views/pregunta/pregunta.page';
 //Gestio de les rutes de la app
 const routes: Routes = [
   //La ruta inicial que te redigireix al login
@@ -21,7 +25,7 @@ const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: 'home',
+    path: 'temp',
     component: GestioNevComponent,
     canActivate: [AuthGuard],
   },
@@ -33,6 +37,16 @@ const routes: Routes = [
     path: 'formulari',
     component: FormulariPage,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'auditories',
+    component: AuditoriesPage,
+    canActivate: [AuthGuard, AuthGuardAdmin],
+  },
+  {
+    path: 'auditories-form',
+    component: AuditoriesFormPage,
+    canActivate: [AuthGuard, AuthGuardAdmin],
   },
 ];
 
@@ -47,6 +61,8 @@ export const Components = [
   LoginComponent,
   GestioNevComponent,
   ConfigPage,
-  MenuPage,
+  AuditoriesPage,
   FormulariPage,
+  AuditoriesFormPage,
+  PreguntaPage,
 ];

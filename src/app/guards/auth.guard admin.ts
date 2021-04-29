@@ -8,10 +8,11 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { StoragesessionService } from '../services/storagesession.service';
+
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuardAdmin implements CanActivate {
   constructor(
     private router: Router,
     private storagesession: StoragesessionService
@@ -25,10 +26,10 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    if (this.storagesession.isAuthenticated()) {
+    if (this.storagesession.isAdmin()) {
       return true;
     }
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/temp');
     return false;
   }
 }

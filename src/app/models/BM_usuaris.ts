@@ -3,6 +3,7 @@ export class usuaris {
   BM_user: string;
   BM_password: string;
   BM_idLocalitat: number;
+  BM_tipus: string;
 }
 export interface user {
   uid: string;
@@ -15,6 +16,7 @@ export class NewUsuari {
     BM_id: number,
     BM_user: string,
     BM_password: string,
-    BM_idLocalitat: number
+    BM_idLocalitat: number,
+    BM_tipus: string
   ) {}
 }

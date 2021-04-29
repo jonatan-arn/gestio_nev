@@ -3,15 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingController, MenuController, Platform } from '@ionic/angular';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFont from 'pdfmake/build/vfs_fonts';
-import { dies, NuevoDia } from '../models/BM_Dies';
-import { nevera } from '../models/BM_Nevera';
-import { DiesService } from '../services/BM_Dies.service';
-import { NeveraService } from '../services/BM_Nevera.service';
+import { dies, NuevoDia } from '../../models/BM_Dies';
+import { nevera } from '../../models/BM_Nevera';
+import { DiesService } from '../../services/BM_Dies.service';
+import { NeveraService } from '../../services/BM_Nevera.service';
 import { formatDate } from '@angular/common';
-import { UsuarisService } from '../services/BM_usuaris.service';
-import { StoragesessionService } from '../services/storagesession.service';
-import { LocalitatService } from '../services/BM_Localitat.service';
-import { localitat } from '../models/BM_Localitat';
+import { UsuarisService } from '../../services/BM_usuaris.service';
+import { StoragesessionService } from '../../services/storagesession.service';
+import { LocalitatService } from '../../services/BM_Localitat.service';
+import { localitat } from '../../models/BM_Localitat';
 import {
   CalendarModal,
   CalendarModalOptions,

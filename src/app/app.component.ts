@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  admin = false;
+  tenda = true;
   constructor() {}
+  ngOnInit(): void {}
 }

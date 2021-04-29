@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { dies, NuevoDia } from '../models/BM_Dies';
-import { nevera } from '../models/BM_Nevera';
-import { DiesService } from '../services/BM_Dies.service';
-import { NeveraService } from '../services/BM_Nevera.service';
-import { StoragesessionService } from '../services/storagesession.service';
-import { UsuarisService } from '../services/BM_usuaris.service';
+import { dies, NuevoDia } from '../../models/BM_Dies';
+import { nevera } from '../../models/BM_Nevera';
+import { DiesService } from '../../services/BM_Dies.service';
+import { NeveraService } from '../../services/BM_Nevera.service';
+import { StoragesessionService } from '../../services/storagesession.service';
+import { UsuarisService } from '../../services/BM_usuaris.service';
 import { formatDate } from '@angular/common';
 import { MenuController, ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
-import { localitat } from '../models/BM_Localitat';
-import { LocalitatService } from '../services/BM_Localitat.service';
+import { localitat } from '../../models/BM_Localitat';
+import { LocalitatService } from '../../services/BM_Localitat.service';
 
 @Component({
   selector: 'app-gestio-nev',
