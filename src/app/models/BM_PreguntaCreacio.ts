@@ -1,28 +1,20 @@
 export class preguntaCreacio {
-  BM_id: number;
+  BM_id: string;
   BM_nom: string;
   BM_imatge: File;
   BM_comentari: string;
   BM_puntuacio: number;
   BM_perill: boolean;
   BM_auditoriaId: number;
-}
-export function NuevoPreguntaCreacio(
-  id,
-  nom,
-  imatge,
-  comentari,
-  puntuacio,
-  perill,
-  idAuditoria
-): preguntaCreacio {
-  return {
-    BM_id: id,
-    BM_nom: nom,
-    BM_imatge: imatge,
-    BM_comentari: comentari,
-    BM_puntuacio: puntuacio,
-    BM_perill: perill,
-    BM_auditoriaId: idAuditoria,
-  };
+  BM_tipo: string;
+  constructor(id, nom, imatge, comentari, puntuacio, perill, auditoria, tipo) {
+    this.BM_id = id;
+    this.BM_nom = nom;
+    this.BM_imatge = imatge;
+    this.BM_comentari = comentari;
+    this.BM_puntuacio = puntuacio;
+    this.BM_perill = perill;
+    this.BM_auditoriaId = auditoria;
+    this.BM_tipo = tipo;
+  }
 }

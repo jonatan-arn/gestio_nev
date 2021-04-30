@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  NavController,
+} from '@ionic/angular';
 import { AuditoriesService } from 'src/app/services/BM_Auditories.service';
 import { checkbox, NuevoCheckbox } from '../../models/BM_checkbox';
 import { numero } from '../../models/BM_numero';
-import { NuevoPreguntaCreacio } from '../../models/BM_PreguntaCreacio';
+import { preguntaCreacio } from '../../models/BM_PreguntaCreacio';
 import { radio } from '../../models/BM_Radio';
 import { si_no } from '../../models/BM_si_no';
 import { slider } from '../../models/BM_slider';
@@ -18,6 +22,8 @@ import { text } from '../../models/BM_text';
 export class PreguntaPage implements OnInit {
   @Input() tipo: string;
   @Input() auditoriaID: string;
+  b = true;
+  preguntesAux = [];
   puntuacio: number = 1;
   text: string;
   textTrue: string;
@@ -68,44 +74,46 @@ export class PreguntaPage implements OnInit {
   AddCheck() {
     this.checkboxArray.push({ value: '' });
   }
-  guardar() {
+  async guardar() {
     if (this.id == undefined)
       this.alerta('No has introducido el id de la pregunta');
-    let b: boolean = this.AuditoriesService.checkIdPregunta(this.id);
-    if (b) this.alerta('');
-    let p = NuevoPreguntaCreacio(
-      this.id,
-      this.text,
-      this.Checkboxes[1].isItemChecked,
-      this.Checkboxes[0].isItemChecked,
-      this.puntuacio,
-      this.Checkboxes[2].isItemChecked,
-      this.auditoriaID
-    );
+    else {
+      let p = new preguntaCreacio(
+        this.id,
+        this.text,
+        this.Checkboxes[1].isItemChecked,
+        this.Checkboxes[0].isItemChecked,
+        this.puntuacio,
+        this.Checkboxes[2].isItemChecked,
+        this.auditoriaID,
+        this.tipo
+      );
 
-    if (this.tipo == 'radiobutton') {
-      let r = new radio(null, this.id, this.radioButtonArray);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'checkbox') {
-      let r = new checkbox(null, this.id, this.checkboxArray);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'text') {
-      let r = new text(null, this.id);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'SliderNumero') {
-      let r = new slider(null, this.id, this.n1, this.n2);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'sliderIcono') {
-      let r = new smile(null, this.id);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'si/no') {
-      let r = new si_no(null, this.id, this.text1, this.text2, this.textTrue);
-      this.modalController.dismiss({ p, r });
-    } else if (this.tipo == 'numero') {
-      let r = new numero(null, this.id);
-      this.modalController.dismiss({ p, r });
+      if (this.tipo == 'radiobutton') {
+        let r = new radio(null, this.id, this.radioButtonArray);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'checkbox') {
+        let r = new checkbox(null, this.id, this.checkboxArray);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'text') {
+        let r = new text(null, this.id);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'SliderNumero') {
+        let r = new slider(null, this.id, this.n1, this.n2);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'sliderIcono') {
+        let r = new smile(null, this.id);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'si/no') {
+        let r = new si_no(null, this.id, this.text1, this.text2, this.textTrue);
+        this.modalController.dismiss({ p, r });
+      } else if (this.tipo == 'numero') {
+        let r = new numero(null, this.id);
+        this.modalController.dismiss({ p, r });
+      }
     }
   }
+
   radioGroupChange(event) {
     this.textTrue = event.detail.value;
   }
@@ -118,5 +126,17 @@ export class PreguntaPage implements OnInit {
     });
 
     await alert.present();
+  }
+  private checkId() {
+    this.AuditoriesService.checkIdPregunta(this.id).subscribe((res) => {
+      if (res.length != 0)
+        if (this.b) {
+          this.alerta('Ya existe una pregunta con ese id');
+          this.b = false;
+        }
+    }).unsubscribe;
+  }
+  private back() {
+    this.modalController.dismiss();
   }
 }

@@ -5,8 +5,9 @@ import {
   AlertController,
   MenuController,
   ModalController,
+  NavController,
 } from '@ionic/angular';
-import { NuevoAuditoria } from 'src/app/models/BM_Auditories';
+import { auditories } from 'src/app/models/BM_Auditories';
 import { checkbox } from 'src/app/models/BM_checkbox';
 import { numero } from 'src/app/models/BM_numero';
 import { radio } from 'src/app/models/BM_Radio';
@@ -24,6 +25,7 @@ import { PreguntaPage } from '../pregunta/pregunta.page';
   styleUrls: ['./auditories-form.page.scss'],
 })
 export class AuditoriesFormPage implements OnInit {
+  auditoriesAux = [];
   id: string;
   nom: string;
   preguntes: preguntaCreacio[] = [];
@@ -34,13 +36,15 @@ export class AuditoriesFormPage implements OnInit {
   smile: smile[] = [];
   slider: slider[] = [];
   si_no: si_no[] = [];
+  b = true;
 
   constructor(
     public actionSheetController: ActionSheetController,
     private menu: MenuController,
     private modalController: ModalController,
     private alertController: AlertController,
-    private AuditoriesService: AuditoriesService
+    private AuditoriesService: AuditoriesService,
+    private nav: NavController
   ) {}
 
   ngOnInit() {}
@@ -121,15 +125,22 @@ export class AuditoriesFormPage implements OnInit {
     });
     await modal.present();
     const { data } = await modal.onDidDismiss();
-    if (data.r instanceof checkbox) this.checkbox.push(data.r);
-    else if (data.r instanceof radio) this.radiobutton.push(data.r);
-    else if (data.r instanceof slider) this.slider.push(data.r);
-    else if (data.r instanceof smile) this.smile.push(data.r);
-    else if (data.r instanceof si_no) this.si_no.push(data.r);
-    else if (data.r instanceof numero) this.numeros.push(data.r);
-    else if (data.r instanceof text) this.text.push(data.r);
-    let p: preguntaCreacio = data.p;
-    this.preguntes.push(p);
+    if (modal.onDidDismiss())
+      for (let p of this.preguntes) {
+        if (p.BM_id == data.p.BM_id)
+          this.alerta('Esa pregunta con ese id ya existe en esta auditoria');
+        else {
+          let p: preguntaCreacio = data.p;
+          this.preguntes.push(p);
+          if (data.r instanceof checkbox) this.checkbox.push(data.r);
+          else if (data.r instanceof radio) this.radiobutton.push(data.r);
+          else if (data.r instanceof slider) this.slider.push(data.r);
+          else if (data.r instanceof smile) this.smile.push(data.r);
+          else if (data.r instanceof si_no) this.si_no.push(data.r);
+          else if (data.r instanceof numero) this.numeros.push(data.r);
+          else if (data.r instanceof text) this.text.push(data.r);
+        }
+      }
   }
   openMenu() {
     this.menu.toggle();
@@ -144,51 +155,125 @@ export class AuditoriesFormPage implements OnInit {
 
     await alert.present();
   }
-  guardar() {
-    if (this.checkbox.length != 0) {
-      for (let box of this.checkbox) {
-        this.AuditoriesService.put(box, 'BM_Checkbox/');
+  async guardar() {
+    if (this.preguntes.length == 0) {
+      this.alerta('Esta auditoria no tiene creada ninguna pregunta');
+    } else {
+      if (this.nom == undefined || this.nom == '')
+        this.alerta('La auditoria no tiene nombre');
+      else {
+        if (this.checkbox.length != 0) {
+          console.log('check');
+          for (let box of this.checkbox) {
+            this.AuditoriesService.put(box, 'BM_Checkbox/');
+          }
+        }
+        if (this.radiobutton.length != 0) {
+          console.log('radio');
+          for (let radio of this.radiobutton) {
+            this.AuditoriesService.put(radio, 'BM_Radio/');
+          }
+        }
+        if (this.text.length != 0) {
+          console.log('text');
+          for (let tex of this.text) {
+            this.AuditoriesService.put(tex, 'BM_Text/');
+          }
+        }
+        if (this.numeros.length != 0) {
+          for (let n of this.numeros) {
+            this.AuditoriesService.put(n, 'BM_Numero/');
+          }
+        }
+        if (this.slider.length != 0) {
+          console.log('slider');
+          for (let sli of this.slider) {
+            this.AuditoriesService.put(sli, 'BM_Slider/');
+          }
+        }
+        if (this.smile.length != 0) {
+          console.log('smile');
+          for (let sml of this.smile) {
+            this.AuditoriesService.put(sml, 'BM_Smile/');
+          }
+        }
+        if (this.si_no.length != 0) {
+          console.log('si/no');
+          for (let si of this.si_no) {
+            this.AuditoriesService.put(si, 'BM_SiNo/');
+          }
+        }
+        for (let p of this.preguntes) {
+          this.AuditoriesService.put(p, 'BM_PreguntesCreades/');
+        }
+        let auditoria = new auditories(
+          this.id,
+          this.nom,
+          null,
+          formatDate(new Date(), 'yyyy-MM-dd', 'en')
+        );
+        this.AuditoriesService.put(auditoria, 'BM_Auditories/');
+        this.nav.back();
       }
     }
-    if (this.radiobutton.length != 0) {
-      for (let radio of this.radiobutton) {
-        this.AuditoriesService.put(radio, 'BM_Radio/');
+  }
+  private borrarPregunta(id) {
+    for (var i = 0; i < this.preguntes.length; i++) {
+      if (this.preguntes[i].BM_tipo == 'checkbox') {
+        for (var j = 0; j < this.checkbox.length; j++) {
+          if (this.checkbox[j].BM_preguntaId == id) {
+            this.checkbox.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'radiobutton') {
+        for (var j = 0; j < this.radiobutton.length; j++) {
+          if (this.radiobutton[j].BM_preguntaId == id) {
+            this.radiobutton.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'text') {
+        for (var j = 0; j < this.text.length; j++) {
+          if (this.text[j].BM_preguntaId == id) {
+            this.text.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'SliderNumero') {
+        for (var j = 0; j < this.slider.length; j++) {
+          if (this.slider[j].BM_preguntaId == id) {
+            this.slider.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'sliderIcono') {
+        for (var j = 0; j < this.smile.length; j++) {
+          if (this.smile[j].BM_preguntaId == id) {
+            this.smile.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'si/no') {
+        for (var j = 0; j < this.si_no.length; j++) {
+          if (this.si_no[j].BM_preguntaId == id) {
+            this.si_no.splice(j, 1);
+          }
+        }
+      } else if (this.preguntes[i].BM_tipo == 'numero') {
+        for (var j = 0; j < this.numeros.length; j++) {
+          if (this.numeros[j].BM_preguntaId == id) {
+            this.numeros.splice(j, 1);
+          }
+        }
+      }
+      if (this.preguntes[i].BM_id == id) {
+        this.preguntes.splice(i, 1);
       }
     }
-    if (this.text.length != 0) {
-      for (let tex of this.text) {
-        this.AuditoriesService.put(tex, 'BM_Text/');
-      }
-    }
-    if (this.numeros.length != 0) {
-      for (let n of this.numeros) {
-        this.AuditoriesService.put(n, 'BM_Numero/');
-      }
-    }
-    if (this.slider.length != 0) {
-      for (let sli of this.slider) {
-        this.AuditoriesService.put(sli, 'BM_Slider/');
-      }
-    }
-    if (this.smile.length != 0) {
-      for (let sml of this.smile) {
-        this.AuditoriesService.put(sml, 'BM_Smile/');
-      }
-    }
-    if (this.si_no.length != 0) {
-      for (let si of this.si_no) {
-        this.AuditoriesService.put(si, 'BM_SiNo/');
-      }
-    }
-    for (let p of this.preguntes) {
-      this.AuditoriesService.put(p, 'BM_PreguntesCreades/');
-    }
-    let auditoria = NuevoAuditoria(
-      this.id,
-      this.text,
-      null,
-      formatDate(new Date(), 'yyyy-MM-dd', 'en')
-    );
-    this.AuditoriesService.put(auditoria, 'BM_Auditories/');
+  }
+  private async checkId() {
+    this.AuditoriesService.checkIdAuditoria(this.id).subscribe((res) => {
+      if (res.length != 0)
+        if (this.b) {
+          this.alerta('Ya existe una auditoria con ese id');
+          this.b = false;
+        }
+    }).unsubscribe;
   }
 }

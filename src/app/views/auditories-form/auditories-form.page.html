@@ -11,7 +11,12 @@
   <form (ngSubmit)="addAuditoria()">
     <ion-item lines="full">
       <ion-label position="floating">Codigo auditoria:</ion-label>
-      <ion-input [(ngModel)]="id" type="text" name="usuario"></ion-input>
+      <ion-input
+        [(ngModel)]="id"
+        type="text"
+        name="usuario"
+        (ionChange)="checkId()"
+      ></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Nombre</ion-label>
@@ -21,6 +26,9 @@
     <ion-card *ngFor="let pregunta of preguntes">
       <ion-item>
         <ion-label>{{pregunta.BM_nom}}</ion-label>
+        <ion-button (click)="borrarPregunta(pregunta.BM_id)"
+          ><ion-icon name="close-outline"></ion-icon
+        ></ion-button>
       </ion-item>
     </ion-card>
     <ion-row>
@@ -31,7 +39,8 @@
           fill="solid"
           expand="block"
           size="medium"
-          >Continuar
+        >
+          Continuar
         </ion-button>
       </ion-col>
     </ion-row>

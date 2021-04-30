@@ -1,41 +1,54 @@
 <ion-header>
   <ion-toolbar>
+    <ion-button (click)="back()">
+      <ion-icon name="arrow-black-outline"></ion-icon>
+    </ion-button>
     <ion-title>pregunta</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
   <ion-item lines="full">
     <ion-label position="floating">Id de la pregunta:</ion-label>
-    <ion-input [(ngModel)]="id" type="text" ></ion-input>
+    <ion-input [(ngModel)]="id" type="text" (ionChange)="checkId()"></ion-input>
   </ion-item>
   <ion-item lines="full">
     <ion-label position="floating">Texto de la pregunta:</ion-label>
-    <ion-input [(ngModel)]="text" type="text" ></ion-input>
+    <ion-input [(ngModel)]="text" type="text"></ion-input>
   </ion-item>
   <ion-item lines="full">
     <ion-label position="floating">Puntuación de la pregunta:</ion-label>
-    <ion-input [(ngModel)]="puntuacio" type="number" ></ion-input>
+    <ion-input [(ngModel)]="puntuacio" type="number"></ion-input>
   </ion-item>
 
   <ion-card>
     <ion-item *ngFor="let checkboxes of Checkboxes">
       <ion-label>{{checkboxes.value}}</ion-label>
-      <ion-checkbox slot="start" [(ngModel)]="checkboxes.isItemChecked"></ion-checkbox>
+      <ion-checkbox
+        slot="start"
+        [(ngModel)]="checkboxes.isItemChecked"
+      ></ion-checkbox>
     </ion-item>
   </ion-card>
 
-  <ion-card  *ngIf="tipo=='radiobutton'"> 
-    <ion-item *ngFor="let button of radioButtonArray" >
-      <ion-input placeholder="Texto de la opcion" [(ngModel)]="button.value" ></ion-input>
-      <ion-button (click)="AddRadio()"><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+  <ion-card *ngIf="tipo=='radiobutton'">
+    <ion-item *ngFor="let button of radioButtonArray">
+      <ion-input
+        placeholder="Texto de la opcion"
+        [(ngModel)]="button.value"
+      ></ion-input>
+      <ion-button (click)="AddRadio()"
+        ><ion-icon name="add-circle-outline"></ion-icon
+      ></ion-button>
     </ion-item>
   </ion-card>
 
   <ion-card *ngIf="tipo=='checkbox'">
     <ion-item *ngFor="let button of checkboxArray">
-      <ion-input placeholder="Texto de la opcion" [(ngModel)]="button.value"></ion-input>
+      <ion-input
+        placeholder="Texto de la opcion"
+        [(ngModel)]="button.value"
+      ></ion-input>
       <ion-button (click)="AddCheck()">
         <ion-icon name="add-circle-outline"></ion-icon>
       </ion-button>
@@ -60,7 +73,10 @@
 
   <ion-card *ngIf="tipo=='si/no'">
     <ion-item>
-      <ion-label>Introduce el texto de los botones y selecciona cual es el correcto</ion-label>
+      <ion-label
+        >Introduce el texto de los botones y selecciona cual es el
+        correcto</ion-label
+      >
     </ion-item>
     <ion-radio-group (ionChange)="radioGroupChange($event)">
       <ion-item>
@@ -68,7 +84,7 @@
         <ion-radio slot="start" value="text1"></ion-radio>
       </ion-item>
       <ion-item>
-        <ion-input [(ngModel)]="text2" ></ion-input>
+        <ion-input [(ngModel)]="text2"></ion-input>
         <ion-radio slot="start" value="text2"></ion-radio>
       </ion-item>
     </ion-radio-group>
@@ -76,14 +92,19 @@
 
   <ion-card *ngIf="tipo=='numero'">numero</ion-card>
 
-
-
-
   <ion-row>
     <ion-col>
-      <ion-button  (click)="guardar()" mat-raised-button color="primary" class="ion-button-class" shape="round" fill="solid"
-        expand="block" size="medium">Continuar</ion-button>
+      <ion-button
+        (click)="guardar()"
+        mat-raised-button
+        color="primary"
+        class="ion-button-class"
+        shape="round"
+        fill="solid"
+        expand="block"
+        size="medium"
+        >Continuar</ion-button
+      >
     </ion-col>
   </ion-row>
-
 </ion-content>

@@ -3,13 +3,10 @@ export class auditories {
   BM_nom: string;
   BM_tendaId: number;
   BM_data: string;
-}
-
-export function NuevoAuditoria(id, nom, tendaId, data): auditories {
-  return {
-    BM_id: id,
-    BM_nom: nom,
-    BM_tendaId: tendaId,
-    BM_data: data,
-  };
+  constructor(id, nom, tendaId, data) {
+    this.BM_id = id;
+    this.BM_nom = nom;
+    this.BM_tendaId = tendaId;
+    this.BM_data = data;
+  }
 }

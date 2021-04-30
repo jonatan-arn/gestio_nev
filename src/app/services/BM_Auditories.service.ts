@@ -26,16 +26,23 @@ export class AuditoriesService {
     this.afs.collection(colecio).add(Object.assign({}, objecte));
   }
   checkIdPregunta(id) {
-    let s = this.afs.collection<preguntaCreacio>(
+    const dataCollection: AngularFirestoreCollection<preguntaCreacio> = this.afs.collection<preguntaCreacio>(
       'BM_PreguntesCreades/',
-      (ref) => ref.where('BM_PreguntesCreades', '==', id)
+      (ref) => ref.where('BM_id', '==', id)
     );
-    s.get().toPromise();
 
-    s.get().subscribe((res) => {
-      if (res.empty) return false;
-      else return true;
-    });
+    return dataCollection.valueChanges();
+  }
+  checkIdAuditoria(id) {
+    const dataCollection: AngularFirestoreCollection<auditories> = this.afs.collection<auditories>(
+      'BM_Auditories/',
+      (ref) => ref.where('BM_id', '==', id)
+    );
+
+    return dataCollection.valueChanges();
+  }
+  getAll() {
+    return this.afs.collection<auditories>('BM_Auditories').valueChanges();
   }
   add(auditoria: auditories) {
     /*   this.afs
