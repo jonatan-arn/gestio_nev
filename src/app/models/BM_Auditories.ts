@@ -1,5 +1,5 @@
 export class auditories {
-  BM_id: number;
+  BM_id: string;
   BM_nom: string;
   BM_tendaId: number;
   BM_data: string;

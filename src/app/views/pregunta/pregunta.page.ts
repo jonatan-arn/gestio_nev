@@ -22,6 +22,7 @@ import { text } from '../../models/BM_text';
 export class PreguntaPage implements OnInit {
   @Input() tipo: string;
   @Input() auditoriaID: string;
+  preguntes$;
   b = true;
   preguntesAux = [];
   puntuacio: number = 1;
@@ -65,9 +66,7 @@ export class PreguntaPage implements OnInit {
     private AuditoriesService: AuditoriesService
   ) {}
 
-  ngOnInit() {
-    console.log(this.tipo);
-  }
+  ngOnInit() {}
   AddRadio() {
     this.radioButtonArray.push({ value: '' });
   }
@@ -112,6 +111,7 @@ export class PreguntaPage implements OnInit {
         this.modalController.dismiss({ p, r });
       }
     }
+    this.preguntes$.unsubscribe();
   }
 
   radioGroupChange(event) {
@@ -128,13 +128,17 @@ export class PreguntaPage implements OnInit {
     await alert.present();
   }
   private checkId() {
-    this.AuditoriesService.checkIdPregunta(this.id).subscribe((res) => {
-      if (res.length != 0)
-        if (this.b) {
-          this.alerta('Ya existe una pregunta con ese id');
-          this.b = false;
-        }
-    }).unsubscribe;
+    this.preguntes$ = this.AuditoriesService.checkIdPregunta(this.id).subscribe(
+      (res) => {
+        if (res.length != 0)
+          if (this.b) {
+            this.alerta('Ya existe una pregunta con ese id');
+            this.b = false;
+          } else {
+            this.b = true;
+          }
+      }
+    );
   }
   private back() {
     this.modalController.dismiss();

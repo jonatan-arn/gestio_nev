@@ -48,6 +48,10 @@ const routes: Routes = [
     component: AuditoriesFormPage,
     canActivate: [AuthGuard, AuthGuardAdmin],
   },
+  {
+    path: 'popover-page',
+    loadChildren: () => import('./views/popover-page/popover-page.module').then( m => m.PopoverPagePageModule)
+  },
 ];
 
 @NgModule({

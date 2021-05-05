@@ -8,14 +8,16 @@
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let auditoria of auditories">
+  <ion-list *ngFor="let auditoria of auditories$ | async">
     <ion-card>
       <ion-item>
         <ion-label>
           {{auditoria.BM_id}}
           <p>{{auditoria.BM_nom}}</p>
         </ion-label>
-        <ion-icon name="ellipsis-horizontal"></ion-icon>
+        <ion-button (click)="optionAudiotoria( $event, auditoria)" fill="clear">
+          <ion-icon name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
       </ion-item>
     </ion-card>
   </ion-list>

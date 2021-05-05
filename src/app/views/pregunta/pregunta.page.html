@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button (click)="back()">
-      <ion-icon name="arrow-black-outline"></ion-icon>
+    <ion-button (click)="back()" fill="clear">
+      <ion-icon name="arrow-back-outline"></ion-icon>
     </ion-button>
     <ion-title>pregunta</ion-title>
   </ion-toolbar>
@@ -10,7 +10,7 @@
 <ion-content>
   <ion-item lines="full">
     <ion-label position="floating">Id de la pregunta:</ion-label>
-    <ion-input [(ngModel)]="id" type="text" (ionChange)="checkId()"></ion-input>
+    <ion-input [(ngModel)]="id" type="text" (ionBlur)="checkId()"></ion-input>
   </ion-item>
   <ion-item lines="full">
     <ion-label position="floating">Texto de la pregunta:</ion-label>

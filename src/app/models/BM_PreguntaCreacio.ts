@@ -5,7 +5,7 @@ export class preguntaCreacio {
   BM_comentari: string;
   BM_puntuacio: number;
   BM_perill: boolean;
-  BM_auditoriaId: number;
+  BM_auditoriaId: string;
   BM_tipo: string;
   constructor(id, nom, imatge, comentari, puntuacio, perill, auditoria, tipo) {
     this.BM_id = id;

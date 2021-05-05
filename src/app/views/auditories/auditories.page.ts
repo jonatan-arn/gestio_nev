@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuController } from '@ionic/angular';
+import {
+  MenuController,
+  ModalController,
+  PopoverController,
+} from '@ionic/angular';
 import { auditories } from 'src/app/models/BM_Auditories';
 import { AuditoriesService } from 'src/app/services/BM_Auditories.service';
+import { AuditoriesFormPage } from '../auditories-form/auditories-form.page';
+import { PopoverPagePage } from '../popover-page/popover-page.page';
 
 @Component({
   selector: 'app-auditories',
@@ -10,24 +16,39 @@ import { AuditoriesService } from 'src/app/services/BM_Auditories.service';
   styleUrls: ['./auditories.page.scss'],
 })
 export class AuditoriesPage implements OnInit {
-  auditories: auditories[] = [];
+  auditories$ = this.auditoriaService.auditorias;
   constructor(
     private menu: MenuController,
     private auditoriaService: AuditoriesService,
-    private router: Router
+    private modalController: ModalController,
+    private popoverController: PopoverController
   ) {}
 
   ngOnInit() {
     this.menu.enable(true);
-    this.auditoriaService.getAll().subscribe((res) => {
-      this.auditories = res;
-      console.log(res);
-    });
   }
   openMenu() {
     this.menu.toggle();
   }
-  openAuditoria() {
-    this.router.navigateByUrl('/auditories-form');
+  async openAuditoria() {
+    const modal = await this.modalController.create({
+      component: AuditoriesFormPage,
+      cssClass: 'my-custom-class',
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+  }
+  async optionAudiotoria(event, auditoria) {
+    const popover = await this.popoverController.create({
+      component: PopoverPagePage,
+      cssClass: 'my-custom-class',
+      event: event,
+      translucent: true,
+      componentProps: { aud: auditoria },
+    });
+    await popover.present();
+
+    const { role } = await popover.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
   }
 }

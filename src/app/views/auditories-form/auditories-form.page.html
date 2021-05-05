@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button slot="start">
-      <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
+    <ion-button slot="start" fill="clear" (click)="back()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
     </ion-button>
     <ion-title>auditoriesForm</ion-title>
   </ion-toolbar>
@@ -15,7 +15,7 @@
         [(ngModel)]="id"
         type="text"
         name="usuario"
-        (ionChange)="checkId()"
+        (ionBlur)="checkId()"
       ></ion-input>
     </ion-item>
     <ion-item lines="full">
@@ -26,8 +26,8 @@
     <ion-card *ngFor="let pregunta of preguntes">
       <ion-item>
         <ion-label>{{pregunta.BM_nom}}</ion-label>
-        <ion-button (click)="borrarPregunta(pregunta.BM_id)"
-          ><ion-icon name="close-outline"></ion-icon
+        <ion-button (click)="borrarPregunta(pregunta.BM_id)" fill="clear">
+          <ion-icon name="close-outline"></ion-icon
         ></ion-button>
       </ion-item>
     </ion-card>
