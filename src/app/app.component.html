@@ -2,17 +2,28 @@
   <ion-menu side="start" menuId="first" contentId="main">
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title>Menu Principal</ion-title>
+        <ion-title>
+          Menu Principal
+          <ion-button (click)="logOut()">
+            <ion-icon name="log-out-outline"></ion-icon>
+          </ion-button>
+        </ion-title>
       </ion-toolbar>
-    </ion-header>  
+    </ion-header>
     <ion-content>
       <ion-list>
-        <div *ngIf="admin==false">
-        <ion-item [routerLink]="['/home']">Gestión de temperaturas</ion-item>
-        <ion-item [routerLink]="['/formulari']">Creación de pdf</ion-item>
+        <div *ngIf="admin == false">
+          <ion-item [routerLink]="['/temp']">Gestión de temperaturas</ion-item>
+          <ion-item [routerLink]="['/formulari']">Creación de pdf</ion-item>
         </div>
-        <ion-item [routerLink]="['/auditories']">Realizar una auditoria</ion-item>
-        <div *ngIf="admin==true"><ion-item [routerLink]="['/auditories-form']">Crear una auditoria</ion-item></div>
+        <ion-item [routerLink]="['/auditories']"
+          >Realizar una auditoria</ion-item
+        >
+        <div *ngIf="admin == true">
+          <ion-item [routerLink]="['/auditories-form']"
+            >Crear una auditoria</ion-item
+          >
+        </div>
       </ion-list>
     </ion-content>
   </ion-menu>

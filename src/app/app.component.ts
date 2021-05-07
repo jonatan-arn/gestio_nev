@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MenuController } from '@ionic/angular';
+import { StoragesessionService } from './services/storagesession.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,14 @@ import { Component } from '@angular/core';
 export class AppComponent {
   admin = false;
   tenda = true;
-  constructor() {}
+  constructor(
+    private stgService: StoragesessionService,
+    private menu: MenuController
+  ) {}
   ngOnInit(): void {}
+  logOut() {
+    this.menu.close();
+    this.menu.enable(false);
+    this.stgService.setSessionLoggedOut();
+  }
 }

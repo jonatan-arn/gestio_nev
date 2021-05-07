@@ -69,7 +69,7 @@
     </ion-item>
   </ion-card>
 
-  <ion-card *ngIf="tipo=='sliderIcono'">sliderIcono</ion-card>
+  <ion-card *ngIf="tipo=='sliderIcono'"></ion-card>
 
   <ion-card *ngIf="tipo=='si/no'">
     <ion-item>
@@ -81,16 +81,16 @@
     <ion-radio-group (ionChange)="radioGroupChange($event)">
       <ion-item>
         <ion-input [(ngModel)]="text1"></ion-input>
-        <ion-radio slot="start" value="text1"></ion-radio>
+        <ion-radio slot="start" value="BM_text1"></ion-radio>
       </ion-item>
       <ion-item>
         <ion-input [(ngModel)]="text2"></ion-input>
-        <ion-radio slot="start" value="text2"></ion-radio>
+        <ion-radio slot="start" value="BM_text2"></ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-card>
 
-  <ion-card *ngIf="tipo=='numero'">numero</ion-card>
+  <ion-card *ngIf="tipo=='numero'"></ion-card>
 
   <ion-row>
     <ion-col>

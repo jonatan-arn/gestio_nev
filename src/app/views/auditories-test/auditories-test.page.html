@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" (click)="back()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <ion-title><h1>{{aud.BM_nom}}</h1></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let pregunta of Arraypreguntes">
+    <ion-card>
+      <ion-item>
+        <ion-label>{{pregunta.BM_nom}}</ion-label>
+        <ion-icon
+          *ngIf="pregunta.BM_perill==true"
+          slot="start"
+          name="warning-outline"
+        ></ion-icon>
+      </ion-item>
+
+      <ion-item>
+        <ion-input placeholder="comentario"></ion-input>
+        <ion-button fill="clear">
+          <ion-icon slot="start" name="camera-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item *ngIf="pregunta.BM_tipo=='text'">
+        <div *ngFor="let text of Arraytext">
+          <span *ngIf="text.BM_id == pregunta.BM_id">
+            <ion-input placeholder="text"></ion-input>
+          </span>
+        </div>
+      </ion-item>
+
+      <ion-item *ngIf="pregunta.BM_tipo=='numero'">
+        <div *ngFor="let numero of Arraynumeros">
+          <span *ngIf="numero.BM_id == pregunta.BM_id">
+            <ion-input placeholder="numero" type="number"></ion-input>
+          </span>
+        </div>
+      </ion-item>
+
+      <span *ngIf="pregunta.BM_tipo=='checkbox'">
+        <span *ngFor="let checkbox of Arraycheckbox">
+          <span *ngIf="checkbox.BM_id == pregunta.BM_id">
+            <ion-item *ngFor="let choice of checkbox.BM_opcions">
+              <ion-checkbox slot="start" [(ngModel)]="choice.isItemChecked">
+              </ion-checkbox>
+              <ion-label>{{choice.value}}</ion-label>
+            </ion-item>
+          </span>
+        </span>
+      </span>
+
+      <ion-item *ngIf="pregunta.BM_tipo=='radio'">
+        <span *ngFor="let radio of Arrayradio">
+          <span *ngIf="radio.BM_id == pregunta.BM_id">
+            <span>
+              <ion-list>
+                <ion-radio-group>
+                  <ion-item *ngFor="let choice of radio.BM_opcions">
+                    <ion-radio
+                      slot="start"
+                      value="{{choice.value}}"
+                    ></ion-radio>
+                    <ion-label>{{choice.value}}</ion-label>
+                  </ion-item>
+                </ion-radio-group>
+              </ion-list>
+            </span>
+          </span>
+        </span>
+      </ion-item>
+
+      <ion-item *ngIf="pregunta.BM_tipo=='si/no'">
+        <span *ngFor="let pSi of Arraysi_no">
+          <span *ngIf="pSi.BM_id == pregunta.BM_id">
+            <ion-list>
+              <ion-radio-group>
+                <ion-item>
+                  <ion-radio slot="start" value="{{pSi.BM_text1}}"></ion-radio>
+                  <ion-label>{{pSi.BM_text1}}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-radio slot="start" value="{{pSi.BM_text2}}"></ion-radio>
+                  <ion-label>{{pSi.BM_text2}}</ion-label>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+          </span>
+        </span>
+      </ion-item>
+
+      <span *ngIf="pregunta.BM_tipo=='SliderNumero'">
+        <ion-item *ngFor="let slider of Arrayslider">
+          <ion-range min="{{slider.BM_n1}}" max="{{slider.BM_n2}}" snaps>
+            <ion-label slot="start" size="small">{{slider.BM_n1}}</ion-label>
+            <ion-label slot="end" size="small">{{slider.BM_n2}}</ion-label>
+          </ion-range>
+        </ion-item>
+      </span>
+
+      <span *ngIf="pregunta.BM_tipo=='sliderIcono'">
+        <ion-item *ngFor="let smile of Arraysmile">
+          <ion-range min="1" max="10" step="1" value="5" snaps>
+            <ion-icon slot="start" size="small" name="sad-outline"></ion-icon>
+            <ion-icon slot="end" size="small" name="happy-outline"></ion-icon>
+          </ion-range>
+        </ion-item>
+      </span>
+    </ion-card>
+  </ion-list>
+</ion-content>

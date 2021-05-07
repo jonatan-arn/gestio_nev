@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-button slot="start">
+    <ion-button fill="clear" slot="start">
       <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
     </ion-button>
     <ion-title>auditories</ion-title>
@@ -9,19 +9,23 @@
 
 <ion-content>
   <ion-list *ngFor="let auditoria of auditories$ | async">
-    <ion-card>
+    <ion-card (tap)="doubleClick($event, auditoria)">
       <ion-item>
         <ion-label>
           {{auditoria.BM_id}}
           <p>{{auditoria.BM_nom}}</p>
         </ion-label>
-        <ion-button (click)="optionAudiotoria( $event, auditoria)" fill="clear">
+        <ion-button
+          (click)="optionAudiotoria($event,auditoria)"
+          fill="clear"
+          *ngIf="admin==true"
+        >
           <ion-icon name="ellipsis-horizontal"></ion-icon>
         </ion-button>
       </ion-item>
     </ion-card>
   </ion-list>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="admin==true">
     <ion-fab-button (click)="openAuditoria()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button> </ion-fab

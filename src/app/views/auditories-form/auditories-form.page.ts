@@ -8,6 +8,7 @@ import {
   NavController,
   NavParams,
 } from '@ionic/angular';
+import { Observable } from 'rxjs';
 import { auditories } from 'src/app/models/BM_Auditories';
 import { checkbox } from 'src/app/models/BM_checkbox';
 import { numero } from 'src/app/models/BM_numero';
@@ -29,13 +30,12 @@ export class AuditoriesFormPage implements OnInit {
   @Input() aud: auditories;
   auditories$;
   @Input() edit: boolean;
-  auditoriesAux = [];
+  auditoriesAux: auditories[] = [];
   id: string;
-  isSubscribe: boolean = false;
   nom: string;
   preguntes: preguntaCreacio[] = [];
   checkbox: checkbox[] = [];
-  radiobutton: radio[] = [];
+  radio: radio[] = [];
   text: text[] = [];
   numeros: numero[] = [];
   smile: smile[] = [];
@@ -51,11 +51,86 @@ export class AuditoriesFormPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.AuditoriesService.auditorias.subscribe(
+      (res) => (this.auditoriesAux = res)
+    );
     if (this.aud != undefined) {
       this.id = this.aud.BM_id;
       this.nom = this.aud.BM_nom;
-      this.AuditoriesService.getPreguntes(this.aud.BM_id).subscribe((res) => {
-        this.preguntes = res;
+      this.AuditoriesService.preguntes.subscribe((res) => {
+        for (let i = 0; i < res.length; i++)
+          if (this.aud.BM_id == res[i].BM_auditoriaId)
+            this.preguntes.push(res[i]);
+      });
+
+      this.AuditoriesService.checkbox.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.checkbox.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.radio.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.radio.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.slider.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.slider.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.smile.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.smile.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.siNo.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.si_no.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.text.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.text.push(res[i]);
+            }
+          }
+      });
+
+      this.AuditoriesService.numero.subscribe((res) => {
+        if (res[0] != undefined)
+          for (var i = 0; i < res.length; i++) {
+            for (var j = 0; j < this.preguntes.length; j++) {
+              if (res[i].BM_id == this.preguntes[j].BM_id)
+                this.numeros.push(res[i]);
+            }
+          }
       });
     }
   }
@@ -149,8 +224,9 @@ export class AuditoriesFormPage implements OnInit {
         }
       if (!b) {
         this.preguntes.push(preg);
+
         if (data.r instanceof checkbox) this.checkbox.push(data.r);
-        else if (data.r instanceof radio) this.radiobutton.push(data.r);
+        else if (data.r instanceof radio) this.radio.push(data.r);
         else if (data.r instanceof slider) this.slider.push(data.r);
         else if (data.r instanceof smile) this.smile.push(data.r);
         else if (data.r instanceof si_no) this.si_no.push(data.r);
@@ -182,74 +258,58 @@ export class AuditoriesFormPage implements OnInit {
         if (this.checkbox.length != 0) {
           console.log('check');
           for (let box of this.checkbox) {
-            this.AuditoriesService.put(box, 'BM_Checkbox/');
+            this.AuditoriesService.onSave(box, 'BM_Checkbox');
           }
         }
-        if (this.radiobutton.length != 0) {
+        if (this.radio.length != 0) {
           console.log('radio');
-          for (let radio of this.radiobutton) {
-            this.AuditoriesService.put(radio, 'BM_Radio/');
+          for (let radio of this.radio) {
+            this.AuditoriesService.onSave(radio, 'BM_Radio');
           }
         }
         if (this.text.length != 0) {
           for (let tex of this.text) {
-            this.AuditoriesService.put(tex, 'BM_Text/');
+            this.AuditoriesService.onSave(tex, 'BM_Text');
           }
         }
         if (this.numeros.length != 0) {
           for (let n of this.numeros) {
-            this.AuditoriesService.put(n, 'BM_Numero/');
+            this.AuditoriesService.onSave(n, 'BM_Numero');
           }
         }
         if (this.slider.length != 0) {
           console.log('slider');
           for (let sli of this.slider) {
-            this.AuditoriesService.put(sli, 'BM_Slider/');
+            this.AuditoriesService.onSave(sli, 'BM_Slider');
           }
         }
         if (this.smile.length != 0) {
           console.log('smile');
           for (let sml of this.smile) {
-            this.AuditoriesService.put(sml, 'BM_Smile/');
+            this.AuditoriesService.onSave(sml, 'BM_Smile');
           }
         }
         if (this.si_no.length != 0) {
           console.log('si/no');
           for (let si of this.si_no) {
-            this.AuditoriesService.put(si, 'BM_SiNo/');
+            this.AuditoriesService.onSave(si, 'BM_SiNo');
           }
         }
         for (let p of this.preguntes) {
-          if (this.edit) {
-            const dataPreg = this.AuditoriesService.get(
-              'BM_PreguntesCreades/',
-              'BM_auditoriaId',
-              p.BM_auditoriaId
-            );
-
-            this.AuditoriesService.delete(dataPreg, 'BM_PreguntesCreades');
-          }
           p.BM_auditoriaId = this.id;
-          this.AuditoriesService.put(p, 'BM_PreguntesCreades/');
+          this.AuditoriesService.onSave(p, 'BM_PreguntesCreades');
         }
+        if (this.edit)
+          this.AuditoriesService.onDelete(this.aud.BM_id, 'BM_Auditories');
         let auditoria = new auditories(
           this.id,
           this.nom,
           null,
           formatDate(new Date(), 'yyyy-MM-dd', 'en')
         );
-        if (this.edit) {
-          const dataCollection = this.AuditoriesService.get(
-            'BM_Auditories/',
-            'BM_id',
-            auditoria.BM_id
-          );
-          this.AuditoriesService.delete(dataCollection, 'BM_Auditories');
-        }
+
         console.log(auditoria);
-        this.AuditoriesService.onSaveAuditoria(auditoria);
-        //this.AuditoriesService.put(auditoria, 'BM_Auditories/');
-        if (this.isSubscribe) this.auditories$.unsubscribe();
+        this.AuditoriesService.onSave(auditoria, 'BM_Auditories');
         this.modalController.dismiss();
       }
     }
@@ -257,102 +317,69 @@ export class AuditoriesFormPage implements OnInit {
   private borrarPregunta(id) {
     for (var i = 0; i < this.preguntes.length; i++) {
       if (this.preguntes[i].BM_tipo == 'checkbox') {
-        if (this.edit) {
-          const checkbox = this.AuditoriesService.get(
-            'BM_Checkbox/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(checkbox, 'BM_Checkbox');
-        }
         for (var j = 0; j < this.checkbox.length; j++) {
-          if (this.checkbox[j].BM_preguntaId == id) {
+          if (this.checkbox[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(
+                this.checkbox[j].BM_id,
+                'BM_Checkbox'
+              );
             this.checkbox.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'radiobutton') {
-        if (this.edit) {
-          const radio = this.AuditoriesService.get(
-            'BM_Radio/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(radio, 'BM_Radio');
-        }
-        for (var j = 0; j < this.radiobutton.length; j++) {
-          if (this.radiobutton[j].BM_preguntaId == id) {
-            this.radiobutton.splice(j, 1);
+        for (var j = 0; j < this.radio.length; j++) {
+          if (this.radio[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(this.radio[j].BM_id, 'BM_Radio');
+            this.radio.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'text') {
-        if (this.edit) {
-          const text = this.AuditoriesService.get(
-            'BM_Text/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(text, 'BM_Text');
-        }
         for (var j = 0; j < this.text.length; j++) {
-          if (this.text[j].BM_preguntaId == id) {
+          if (this.text[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(this.text[j].BM_id, 'BM_Text');
+
             this.text.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'SliderNumero') {
-        if (this.edit) {
-          const slider = this.AuditoriesService.get(
-            'BM_Slider/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(slider, 'BM_Slider');
-        }
         for (var j = 0; j < this.slider.length; j++) {
-          if (this.slider[j].BM_preguntaId == id) {
+          if (this.slider[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(
+                this.slider[j].BM_id,
+                'BM_Slider'
+              );
             this.slider.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'sliderIcono') {
-        if (this.edit) {
-          const smile = this.AuditoriesService.get(
-            'BM_Smile/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(smile, 'BM_Smile');
-        }
         for (var j = 0; j < this.smile.length; j++) {
-          if (this.smile[j].BM_preguntaId == id) {
+          if (this.smile[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(this.smile[j].BM_id, 'BM_Smile');
             this.smile.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'si/no') {
-        if (this.edit) {
-          const si_no = this.AuditoriesService.get(
-            'BM_SiNo/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(si_no, 'BM_SiNo');
-        }
         for (var j = 0; j < this.si_no.length; j++) {
-          if (this.si_no[j].BM_preguntaId == id) {
+          if (this.si_no[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(this.si_no[j].BM_id, 'BM_SiNo');
             this.si_no.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'numero') {
         console.log('numero');
-        if (this.edit) {
-          console.log('numero borrat');
-          const numero = this.AuditoriesService.get(
-            'BM_Numero/',
-            'BM_preguntaId',
-            id
-          );
-          this.AuditoriesService.delete(numero, 'BM_Numero');
-        }
         for (var j = 0; j < this.numeros.length; j++) {
-          if (this.numeros[j].BM_preguntaId == id) {
+          if (this.numeros[j].BM_id == id) {
+            if (this.edit)
+              this.AuditoriesService.onDelete(
+                this.numeros[j].BM_id,
+                'BM_Numero'
+              );
             this.numeros.splice(j, 1);
           }
         }
@@ -360,29 +387,23 @@ export class AuditoriesFormPage implements OnInit {
       if (this.preguntes[i].BM_id == id) {
         if (this.edit) {
           console.log('pregunta borrada');
-          const dataPreg = this.AuditoriesService.get(
-            'BM_PreguntesCreades/',
-            'BM_auditoriaId',
-            this.preguntes[i].BM_auditoriaId
+          this.AuditoriesService.onDelete(
+            this.preguntes[i].BM_id,
+            'BM_PreguntesCreades'
           );
-          this.AuditoriesService.delete(dataPreg, 'BM_PreguntesCreades');
         }
         this.preguntes.splice(i, 1);
       }
     }
   }
-  private async checkId() {
-    this.isSubscribe = true;
-    this.auditories$ = this.AuditoriesService.checkIdAuditoria(
-      this.id
-    ).subscribe((res) => {
-      if (res.length != 0)
-        if (this.b) {
-          this.alerta('Ya existe una auditoria con ese id');
-          this.b = false;
-        } else {
-          this.b = true;
-        }
-    });
+  private checkId() {
+    console.log(this.auditoriesAux);
+    for (let au of this.auditoriesAux) {
+      console.log(au);
+      if (au.BM_id == this.id) {
+        this.alerta('Ya existe una auditoria con ese id');
+        break;
+      }
+    }
   }
 }

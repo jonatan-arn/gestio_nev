@@ -11,12 +11,3 @@ export interface user {
   displayName: string;
   emailVerified: boolean;
 }
-export class NewUsuari {
-  constructor(
-    BM_id: number,
-    BM_user: string,
-    BM_password: string,
-    BM_idLocalitat: number,
-    BM_tipus: string
-  ) {}
-}

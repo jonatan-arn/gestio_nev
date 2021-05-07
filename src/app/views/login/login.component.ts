@@ -7,6 +7,7 @@ import { AppComponent } from '../../app.component';
 import { UsuarisService } from '../../services/BM_usuaris.service';
 import { LoginService } from '../../services/login.service';
 import { StoragesessionService } from '../../services/storagesession.service';
+import { AuditoriesPage } from '../auditories/auditories.page';
 
 const { PushNotifications } = Plugins;
 
@@ -21,10 +22,9 @@ export class LoginComponent implements OnInit {
   token: any;
   admin: boolean;
   constructor(
+    private stgService: StoragesessionService,
     private loginService: LoginService,
-    private router: Router,
-    private StgSesion: StoragesessionService,
-    private afs: AngularFirestore,
+    private auditoria: AuditoriesPage,
     private menu: MenuController,
     private app: AppComponent,
     private UsuariService: UsuarisService,
@@ -54,15 +54,6 @@ export class LoginComponent implements OnInit {
     }
   }
   logIn() {
-    this.loginService.login(this.user, this.pwd).then(() => {
-      const user = this.UsuariService.getUsuari(this.user);
-      user.subscribe((res) => {
-        if (res[0].BM_tipus == 'admin') {
-          this.app.admin = true;
-        } else {
-          this.app.admin = false;
-        }
-      });
-    });
+    this.loginService.login(this.user, this.pwd);
   }
 }

@@ -11,6 +11,7 @@ import { AlertController } from '@ionic/angular';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { localitat } from '../../models/BM_Localitat';
 import { LocalitatService } from '../../services/BM_Localitat.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -40,7 +41,8 @@ export class GestioNevComponent implements OnInit {
     private alertController: AlertController,
     private menu: MenuController,
     private emailComposer: EmailComposer,
-    private LocalitatService: LocalitatService
+    private LocalitatService: LocalitatService,
+    private menuView: AppComponent
   ) {}
   async presentToast() {
     const toast = await this.toastController.create({
@@ -51,6 +53,11 @@ export class GestioNevComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.StgSesion.isAdmin()) {
+      this.menuView.admin = true;
+    } else {
+      this.menuView.admin = false;
+    }
     this.menu.enable(true);
     this.yesterdayDate = new Date();
     this.yesterdayDate = new Date(
@@ -149,9 +156,7 @@ export class GestioNevComponent implements OnInit {
         });
     }
   }
-  logOut() {
-    this.StgSesion.setSessionLoggedOut();
-  }
+
   //Metode que se ejectua quan es canvia de dia amb el datePicker
   updateDay($event) {
     const date: String = $event.detail.value.slice(0, 10);

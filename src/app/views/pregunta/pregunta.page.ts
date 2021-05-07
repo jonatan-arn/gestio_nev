@@ -5,7 +5,7 @@ import {
   NavController,
 } from '@ionic/angular';
 import { AuditoriesService } from 'src/app/services/BM_Auditories.service';
-import { checkbox, NuevoCheckbox } from '../../models/BM_checkbox';
+import { checkbox } from '../../models/BM_checkbox';
 import { numero } from '../../models/BM_numero';
 import { preguntaCreacio } from '../../models/BM_PreguntaCreacio';
 import { radio } from '../../models/BM_Radio';
@@ -22,7 +22,7 @@ import { text } from '../../models/BM_text';
 export class PreguntaPage implements OnInit {
   @Input() tipo: string;
   @Input() auditoriaID: string;
-  preguntes$;
+  preguntes: preguntaCreacio[] = [];
   b = true;
   preguntesAux = [];
   puntuacio: number = 1;
@@ -66,12 +66,14 @@ export class PreguntaPage implements OnInit {
     private AuditoriesService: AuditoriesService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.AuditoriesService.preguntes.subscribe((res) => (this.preguntes = res));
+  }
   AddRadio() {
     this.radioButtonArray.push({ value: '' });
   }
   AddCheck() {
-    this.checkboxArray.push({ value: '' });
+    this.checkboxArray.push({ value: '', isItemChecked: false });
   }
   async guardar() {
     if (this.id == undefined)
@@ -88,7 +90,7 @@ export class PreguntaPage implements OnInit {
         this.tipo
       );
 
-      if (this.tipo == 'radiobutton') {
+      if (this.tipo == 'radio') {
         let r = new radio(null, this.id, this.radioButtonArray);
         this.modalController.dismiss({ p, r });
       } else if (this.tipo == 'checkbox') {
@@ -111,7 +113,6 @@ export class PreguntaPage implements OnInit {
         this.modalController.dismiss({ p, r });
       }
     }
-    this.preguntes$.unsubscribe();
   }
 
   radioGroupChange(event) {
@@ -128,17 +129,12 @@ export class PreguntaPage implements OnInit {
     await alert.present();
   }
   private checkId() {
-    this.preguntes$ = this.AuditoriesService.checkIdPregunta(this.id).subscribe(
-      (res) => {
-        if (res.length != 0)
-          if (this.b) {
-            this.alerta('Ya existe una pregunta con ese id');
-            this.b = false;
-          } else {
-            this.b = true;
-          }
+    for (let p of this.preguntes) {
+      if (p.BM_id == this.id) {
+        this.alerta('Ya existe una pregunta con ese id');
+        break;
       }
-    );
+    }
   }
   private back() {
     this.modalController.dismiss();

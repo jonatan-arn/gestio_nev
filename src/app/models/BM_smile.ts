@@ -1,8 +1,8 @@
 export class smile {
   BM_resultat: number;
-  BM_preguntaId: number;
+  BM_id: string;
   constructor(resultat, id) {
     this.BM_resultat = resultat;
-    this.BM_preguntaId = id;
+    this.BM_id = id;
   }
 }

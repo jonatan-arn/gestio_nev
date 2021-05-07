@@ -1,35 +1,44 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-button slot="start">
-      <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
+    <ion-button fill="clear" slot="start">
+      <ion-menu-button
+        fill="clear"
+        autoHide="false"
+        (click)="openMenu()"
+      ></ion-menu-button>
     </ion-button>
-    <ion-title>
-      Lista neveras
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="logOut()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title> Lista neveras </ion-title>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-item>
     <ion-label>Fecha:</ion-label>
-    <ion-datetime displayFormat="YYYY-MM-DD" [max]="todayDate" [value]="todayDate" (ionChange)="updateDay($event)">
+    <ion-datetime
+      displayFormat="YYYY-MM-DD"
+      [max]="todayDate"
+      [value]="todayDate"
+      (ionChange)="updateDay($event)"
+    >
     </ion-datetime>
   </ion-item>
   <ion-item-divider></ion-item-divider>
-  <ion-list *ngFor="let dia of (diesVista);let i = index" >
-    <ion-item lines="full" >
-      <ion-label *ngIf="dia.BM_idNevera == neveres[i].BM_id">{{neveres[i].BM_nomNevera}}</ion-label>
+  <ion-list *ngFor="let dia of diesVista; let i = index">
+    <ion-item lines="full">
+      <ion-label *ngIf="dia.BM_idNevera == neveres[i].BM_id">{{
+        neveres[i].BM_nomNevera
+      }}</ion-label>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Temperatura de la nevera: </ion-label>
-      <ion-input [(ngModel)]="dia.BM_temperatura" type="number" disabled="{{check}}"></ion-input>
+      <ion-input
+        [(ngModel)]="dia.BM_temperatura"
+        type="number"
+        disabled="{{ check }}"
+      ></ion-input>
     </ion-item>
   </ion-list>
-  <ion-button (click)="updateTemp()" size="small" expand="block">Guardar</ion-button>
+  <ion-button (click)="updateTemp()" size="small" expand="block"
+    >Guardar</ion-button
+  >
 </ion-content>

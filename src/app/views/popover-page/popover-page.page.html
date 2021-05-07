@@ -1,5 +1,11 @@
 <ion-content>
-  <ion-button (click)="borrar()" fill="clear">Borrar auditoria</ion-button>
+  <ion-button
+    (click)="this.alerta(
+      'Se va a borrar la auditoria y todas la preguntas, estas seguro?'
+    );"
+    fill="clear"
+    >Borrar auditoria</ion-button
+  >
   <ion-button (click)="modificar()" fill="clear"
     >Modificar auditoria
   </ion-button>

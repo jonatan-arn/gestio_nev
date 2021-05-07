@@ -8,8 +8,8 @@ import { FormulariPage } from './views/formulari/formulari.page';
 import { AuditoriesPage } from './views/auditories/auditories.page';
 import { AuthGuardAdmin } from './guards/auth.guard admin';
 import { AuditoriesFormPage } from './views/auditories-form/auditories-form.page';
-import { PreguntaPageRoutingModule } from './views/pregunta/pregunta-routing.module';
 import { PreguntaPage } from './views/pregunta/pregunta.page';
+import { AuditoriesTestPage } from './views/auditories-test/auditories-test.page';
 //Gestio de les rutes de la app
 const routes: Routes = [
   //La ruta inicial que te redigireix al login
@@ -41,7 +41,7 @@ const routes: Routes = [
   {
     path: 'auditories',
     component: AuditoriesPage,
-    canActivate: [AuthGuard, AuthGuardAdmin],
+    canActivate: [AuthGuard],
   },
   {
     path: 'auditories-form',
@@ -49,8 +49,9 @@ const routes: Routes = [
     canActivate: [AuthGuard, AuthGuardAdmin],
   },
   {
-    path: 'popover-page',
-    loadChildren: () => import('./views/popover-page/popover-page.module').then( m => m.PopoverPagePageModule)
+    path: 'auditories-test',
+    component: AuditoriesTestPage,
+    canActivate: [AuthGuard, AuthGuardAdmin],
   },
 ];
 
@@ -69,4 +70,5 @@ export const Components = [
   FormulariPage,
   AuditoriesFormPage,
   PreguntaPage,
+  AuditoriesTestPage,
 ];

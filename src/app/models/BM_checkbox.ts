@@ -1,17 +1,10 @@
 export class checkbox {
   BM_resultat: string;
-  BM_preguntaId: string;
+  BM_id: string;
   BM_opcions: any;
-  constructor(resultat, preguntaid, opcions) {
+  constructor(resultat, id, opcions) {
     this.BM_opcions = opcions;
-    this.BM_preguntaId = preguntaid;
+    this.BM_id = id;
     this.BM_resultat = resultat;
   }
-}
-export function NuevoCheckbox(a, b, c): checkbox {
-  return {
-    BM_resultat: a,
-    BM_preguntaId: b,
-    BM_opcions: c,
-  };
 }
