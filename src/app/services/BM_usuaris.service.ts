@@ -4,6 +4,7 @@ import { usuaris } from '../models/BM_usuaris';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
+  QuerySnapshot,
 } from '@angular/fire/firestore';
 
 @Injectable({
@@ -19,12 +20,21 @@ export class UsuarisService {
   getUsuaris() {
     return this.usuarisArray;
   }
-  getUsuari(email: any) {
+  getUsuari(user: any) {
     let s = this.afs
       .collection<usuaris>('BM_usuaris/', (ref) =>
-        ref.where('BM_user', '==', email)
+        ref.where('BM_user', '==', user)
       )
-      .valueChanges();
+      .get()
+      .toPromise();
     return s;
+  }
+  async getUsuari2(user: string): Promise<QuerySnapshot<usuaris>> {
+    let s = this.afs
+      .collection<usuaris>('BM_usuaris/', (ref) =>
+        ref.where('BM_user', '==', user)
+      )
+      .get();
+    return s.toPromise();
   }
 }

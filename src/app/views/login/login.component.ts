@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Plugins, PushNotificationToken } from '@capacitor/core';
-import { MenuController, Platform } from '@ionic/angular';
+import { LoadingController, MenuController, Platform } from '@ionic/angular';
 import { AppComponent } from '../../app.component';
 import { UsuarisService } from '../../services/BM_usuaris.service';
 import { LoginService } from '../../services/login.service';
@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   pwd: string;
   token: any;
   admin: boolean;
+  loading;
   constructor(
     private stgService: StoragesessionService,
     private loginService: LoginService,
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     private menu: MenuController,
     private app: AppComponent,
     private UsuariService: UsuarisService,
-    private plt: Platform
+    private plt: Platform,
+    public loadingController: LoadingController
   ) {}
 
   ngOnInit() {
@@ -53,7 +55,13 @@ export class LoginComponent implements OnInit {
       PushNotifications.addListener('registrationError', (error: any) => {});
     }
   }
-  logIn() {
-    this.loginService.login(this.user, this.pwd);
+  async logIn() {
+    this.loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Espere',
+    });
+    this.loading.present();
+    await this.loginService.login(this.user, this.pwd);
+    this.loading.dismiss();
   }
 }

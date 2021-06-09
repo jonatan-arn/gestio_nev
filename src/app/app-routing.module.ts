@@ -10,6 +10,7 @@ import { AuthGuardAdmin } from './guards/auth.guard admin';
 import { AuditoriesFormPage } from './views/auditories-form/auditories-form.page';
 import { PreguntaPage } from './views/pregunta/pregunta.page';
 import { AuditoriesTestPage } from './views/auditories-test/auditories-test.page';
+import { AuditoriesTendesPage } from './views/auditories-tendes/auditories-tendes.page';
 //Gestio de les rutes de la app
 const routes: Routes = [
   //La ruta inicial que te redigireix al login
@@ -51,6 +52,11 @@ const routes: Routes = [
   {
     path: 'auditories-test',
     component: AuditoriesTestPage,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'auditories-tendes',
+    component: AuditoriesTendesPage,
     canActivate: [AuthGuard, AuthGuardAdmin],
   },
 ];
@@ -71,4 +77,5 @@ export const Components = [
   AuditoriesFormPage,
   PreguntaPage,
   AuditoriesTestPage,
+  AuditoriesTendesPage,
 ];

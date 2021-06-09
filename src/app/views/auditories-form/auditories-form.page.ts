@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import {
   ActionSheetController,
   AlertController,
+  LoadingController,
   MenuController,
   ModalController,
   NavController,
@@ -42,28 +43,48 @@ export class AuditoriesFormPage implements OnInit {
   slider: slider[] = [];
   si_no: si_no[] = [];
   b = true;
-
+  loading;
   constructor(
     public actionSheetController: ActionSheetController,
     private modalController: ModalController,
     private alertController: AlertController,
-    private AuditoriesService: AuditoriesService
+    private AuditoriesService: AuditoriesService,
+    public loadingController: LoadingController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.AuditoriesService.auditorias.subscribe(
       (res) => (this.auditoriesAux = res)
     );
+
     if (this.aud != undefined) {
+      this.loading = await this.loadingController.create({
+        cssClass: 'my-custom-class',
+        message: 'Espere',
+      });
+      this.loading.present();
       this.id = this.aud.BM_id;
       this.nom = this.aud.BM_nom;
-      this.AuditoriesService.preguntes.subscribe((res) => {
-        for (let i = 0; i < res.length; i++)
-          if (this.aud.BM_id == res[i].BM_auditoriaId)
-            this.preguntes.push(res[i]);
+      const preguntes = await this.AuditoriesService.getAllPreguntes();
+      preguntes.docs.forEach((doc) => {
+        if (this.aud.BM_id == doc.data().BM_auditoriaId) {
+          this.preguntes.push(
+            new preguntaCreacio(
+              doc.data().BM_id,
+              doc.data().BM_nom,
+              doc.data().BM_imatge,
+              doc.data().BM_comentari,
+              doc.data().BM_puntuacio,
+              doc.data().BM_perill,
+              doc.data().BM_auditoriaId,
+              doc.data().BM_tipo
+            )
+          );
+        }
       });
+      this.loading.dismiss();
 
-      this.AuditoriesService.checkbox.subscribe((res) => {
+      this.AuditoriesService.getAllCheckbox().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -73,7 +94,7 @@ export class AuditoriesFormPage implements OnInit {
           }
       });
 
-      this.AuditoriesService.radio.subscribe((res) => {
+      this.AuditoriesService.getAllRadio().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -83,7 +104,7 @@ export class AuditoriesFormPage implements OnInit {
           }
       });
 
-      this.AuditoriesService.slider.subscribe((res) => {
+      this.AuditoriesService.getAllSlider().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -93,7 +114,7 @@ export class AuditoriesFormPage implements OnInit {
           }
       });
 
-      this.AuditoriesService.smile.subscribe((res) => {
+      this.AuditoriesService.getAllSmile().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -103,7 +124,7 @@ export class AuditoriesFormPage implements OnInit {
           }
       });
 
-      this.AuditoriesService.siNo.subscribe((res) => {
+      this.AuditoriesService.getAllSiNo().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -113,7 +134,7 @@ export class AuditoriesFormPage implements OnInit {
           }
       });
 
-      this.AuditoriesService.text.subscribe((res) => {
+      this.AuditoriesService.getAllText().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -122,8 +143,8 @@ export class AuditoriesFormPage implements OnInit {
             }
           }
       });
-
-      this.AuditoriesService.numero.subscribe((res) => {
+      //Accedit a totes les preguntes tipus numero de la base de dades
+      this.AuditoriesService.getAllNumero().subscribe((res) => {
         if (res[0] != undefined)
           for (var i = 0; i < res.length; i++) {
             for (var j = 0; j < this.preguntes.length; j++) {
@@ -134,6 +155,7 @@ export class AuditoriesFormPage implements OnInit {
       });
     }
   }
+  //Metode per poder seleccionar un nou tipus de pregunta i crear-la
   async openPregunta() {
     if (this.id == undefined) {
       this.alerta('Error el id de la auditoria se tiene que introducir');
@@ -236,7 +258,9 @@ export class AuditoriesFormPage implements OnInit {
     }
   }
   back() {
-    this.modalController.dismiss();
+    if (this.preguntes.length == 0)
+      this.alerta('Esta auditoria no tiene creada ninguna pregunta');
+    else this.modalController.dismiss();
   }
   async alerta(s) {
     const alert = await this.alertController.create({
@@ -305,7 +329,8 @@ export class AuditoriesFormPage implements OnInit {
           this.id,
           this.nom,
           null,
-          formatDate(new Date(), 'yyyy-MM-dd', 'en')
+          formatDate(new Date(), 'yyyy-MM-dd', 'en'),
+          null
         );
 
         console.log(auditoria);
@@ -324,7 +349,7 @@ export class AuditoriesFormPage implements OnInit {
                 this.checkbox[j].BM_id,
                 'BM_Checkbox'
               );
-            this.checkbox.splice(j, 1);
+            else this.checkbox.splice(j, 1);
           }
         }
       } else if (this.preguntes[i].BM_tipo == 'radiobutton') {
@@ -395,6 +420,7 @@ export class AuditoriesFormPage implements OnInit {
         this.preguntes.splice(i, 1);
       }
     }
+    this.preguntes = [];
   }
   private checkId() {
     console.log(this.auditoriesAux);

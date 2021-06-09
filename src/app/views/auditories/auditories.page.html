@@ -8,6 +8,23 @@
 </ion-header>
 
 <ion-content>
+  <ion-item [hidden]="true">
+    <ion-label>Tienda</ion-label>
+    <ion-select
+      (ionChange)="navAuditoria($event)"
+      placeholder="Selecciona la tienda"
+      #mySelect
+      cancelText="Cancelar"
+      okText="Ok"
+    >
+      <ion-select-option
+        *ngFor="let tenda of tendes$ | async"
+        value="{{tenda.BM_ID}}"
+      >
+        {{tenda.BM_ID}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-list *ngFor="let auditoria of auditories$ | async">
     <ion-card (tap)="doubleClick($event, auditoria)">
       <ion-item>

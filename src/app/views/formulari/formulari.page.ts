@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingController, MenuController, Platform } from '@ionic/angular';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFont from 'pdfmake/build/vfs_fonts';
-import { dies, NuevoDia } from '../../models/BM_Dies';
+import { dies } from '../../models/BM_Dies';
 import { nevera } from '../../models/BM_Nevera';
 import { DiesService } from '../../services/BM_Dies.service';
 import { NeveraService } from '../../services/BM_Nevera.service';
@@ -20,7 +20,7 @@ import {
 import { FilesystemDirectory, Plugins } from '@capacitor/core';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { ModalController } from '@ionic/angular';
-import { Subject } from 'rxjs';
+import { usuaris } from 'src/app/models/BM_usuaris';
 
 pdfMake.vfs = pdfFont.pdfMake.vfs;
 @Component({
@@ -30,6 +30,7 @@ pdfMake.vfs = pdfFont.pdfMake.vfs;
 })
 export class FormulariPage implements OnInit {
   logoData = null;
+  private usuari: usuaris;
   private neveres: nevera[];
   pdfObj = null;
   private diesVista: dies[] = [];
@@ -110,34 +111,33 @@ export class FormulariPage implements OnInit {
 
   async getPdfData() {
     let s = this.StgSesion.getSessionLoggedIn();
-    this.UsuariService.getUsuari(s['username']).subscribe(async (res) => {
-      this.a = false;
-      this.LocalitatService.getLocalitat(res[0].BM_idLocalitat).subscribe(
-        (loc) => {
-          this.localitat = loc;
-        }
-      );
-      this.NeveraService.getNeveresbyLocalitat(res[0].BM_idLocalitat).subscribe(
-        async (nev) => {
-          this.neveres = nev;
+    const user = await this.UsuariService.getUsuari(s['username']);
+    this.usuari = user.docs[0].data();
+    this.a = false;
+    this.LocalitatService.getLocalitat(this.usuari.BM_idLocalitat).subscribe(
+      (loc) => {
+        this.localitat = loc;
+      }
+    );
+    const neveres = await this.NeveraService.getNeveresbyLocalitat(
+      this.usuari.BM_idLocalitat
+    );
+    neveres.docs.forEach((res) => this.neveres.push(res.data()));
 
-          //Ordenar las neveras para la vista
-          this.neveres = this.neveres.sort((t1, t2) => {
-            const name1 = t1.BM_id;
-            const name2 = t2.BM_id;
-            if (name1 > name2) {
-              return 1;
-            }
-            if (name1 < name2) {
-              return -1;
-            }
-            return 0;
-          });
-          await this.getfechadies().then(() => {});
-          console.log(this.diesVista);
-        }
-      );
+    //Ordenar las neveras para la vista
+    this.neveres = this.neveres.sort((t1, t2) => {
+      const name1 = t1.BM_id;
+      const name2 = t2.BM_id;
+      if (name1 > name2) {
+        return 1;
+      }
+      if (name1 < name2) {
+        return -1;
+      }
+      return 0;
     });
+    await this.getfechadies().then(() => {});
+    console.log(this.diesVista);
 
     console.log(this.a);
   }
@@ -150,15 +150,13 @@ export class FormulariPage implements OnInit {
 
   async getDies(fecha) {
     for (var i = 0; i < this.neveres.length; i++) {
-      let s = await this.DiesService.getDiesByNevera_Fecha(
+      const s = await this.DiesService.getDiesByNevera_Fecha(
         this.neveres[i].BM_id,
         fecha
-      )
-        .get()
-        .toPromise();
-      s.forEach((doc) => {
+      );
+      s.docs.forEach((doc) => {
         this.diesVista.push(
-          NuevoDia(
+          new dies(
             doc.id,
             doc.data().BM_dia,
             doc.data().BM_temperatura,

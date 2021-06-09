@@ -13,16 +13,49 @@
     <ion-content>
       <ion-list>
         <div *ngIf="admin == false">
-          <ion-item [routerLink]="['/temp']">Gestión de temperaturas</ion-item>
-          <ion-item [routerLink]="['/formulari']">Creación de pdf</ion-item>
+          <ion-item [routerLink]="['/temp']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Gestión de temperaturas
+            </ion-button>
+          </ion-item>
+          <ion-item [routerLink]="['/formulari']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Creación de pdf
+            </ion-button>
+          </ion-item>
         </div>
-        <ion-item [routerLink]="['/auditories']"
-          >Realizar una auditoria</ion-item
-        >
+
         <div *ngIf="admin == true">
-          <ion-item [routerLink]="['/auditories-form']"
-            >Crear una auditoria</ion-item
-          >
+          <ion-item [routerLink]="['/auditories']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Realizar una auditoria
+            </ion-button>
+          </ion-item>
+          <ion-item [routerLink]="['/auditories-tendes']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Auditories de las tiendas
+            </ion-button>
+          </ion-item>
         </div>
       </ion-list>
     </ion-content>

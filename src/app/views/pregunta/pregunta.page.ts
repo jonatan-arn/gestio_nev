@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import {
   AlertController,
   ModalController,
@@ -31,11 +32,10 @@ export class PreguntaPage implements OnInit {
   imatge: boolean;
   comentari: boolean;
   perill: boolean;
-  id: string;
+
   text1: string;
   text2: string;
-  n1: number;
-  n2: number;
+
   radioButtonArray: any = [
     {
       value: '',
@@ -63,11 +63,16 @@ export class PreguntaPage implements OnInit {
   constructor(
     private modalController: ModalController,
     private alertController: AlertController,
-    private AuditoriesService: AuditoriesService
+    private AuditoriesService: AuditoriesService,
+    private afs: AngularFirestore
   ) {}
 
-  ngOnInit() {
-    this.AuditoriesService.preguntes.subscribe((res) => (this.preguntes = res));
+  async ngOnInit() {
+    await (
+      await this.AuditoriesService.getAllPreguntes()
+    ).docs.forEach((res) => {
+      this.preguntes.push(res.data());
+    });
   }
   AddRadio() {
     this.radioButtonArray.push({ value: '' });
@@ -76,47 +81,44 @@ export class PreguntaPage implements OnInit {
     this.checkboxArray.push({ value: '', isItemChecked: false });
   }
   async guardar() {
-    if (this.id == undefined)
-      this.alerta('No has introducido el id de la pregunta');
-    else {
-      let p = new preguntaCreacio(
-        this.id,
-        this.text,
-        this.Checkboxes[1].isItemChecked,
-        this.Checkboxes[0].isItemChecked,
-        this.puntuacio,
-        this.Checkboxes[2].isItemChecked,
-        this.auditoriaID,
-        this.tipo
-      );
-
-      if (this.tipo == 'radio') {
-        let r = new radio(null, this.id, this.radioButtonArray);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'checkbox') {
-        let r = new checkbox(null, this.id, this.checkboxArray);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'text') {
-        let r = new text(null, this.id);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'SliderNumero') {
-        let r = new slider(null, this.id, this.n1, this.n2);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'sliderIcono') {
-        let r = new smile(null, this.id);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'si/no') {
-        let r = new si_no(null, this.id, this.text1, this.text2, this.textTrue);
-        this.modalController.dismiss({ p, r });
-      } else if (this.tipo == 'numero') {
-        let r = new numero(null, this.id);
-        this.modalController.dismiss({ p, r });
-      }
+    let p = new preguntaCreacio(
+      this.afs.createId(),
+      this.text,
+      this.Checkboxes[1].isItemChecked,
+      this.Checkboxes[0].isItemChecked,
+      this.puntuacio,
+      this.Checkboxes[2].isItemChecked,
+      this.auditoriaID,
+      this.tipo
+    );
+    if (this.tipo == 'radiobutton') {
+      let r = new radio(null, p.BM_id, this.radioButtonArray);
+      this.modalController.dismiss({ p, r });
+      console.log('radio guardar');
+    } else if (this.tipo == 'checkbox') {
+      let r = new checkbox(null, p.BM_id, this.checkboxArray);
+      this.modalController.dismiss({ p, r });
+    } else if (this.tipo == 'text') {
+      let r = new text(null, p.BM_id);
+      this.modalController.dismiss({ p, r });
+    } else if (this.tipo == 'SliderNumero') {
+      let r = new slider(null, p.BM_id);
+      this.modalController.dismiss({ p, r });
+    } else if (this.tipo == 'sliderIcono') {
+      let r = new smile(null, p.BM_id);
+      this.modalController.dismiss({ p, r });
+    } else if (this.tipo == 'si/no') {
+      let r = new si_no(null, p.BM_id, this.text1, this.text2, this.textTrue);
+      this.modalController.dismiss({ p, r });
+    } else if (this.tipo == 'numero') {
+      let r = new numero(null, p.BM_id);
+      this.modalController.dismiss({ p, r });
     }
   }
 
   radioGroupChange(event) {
-    this.textTrue = event.detail.value;
+    if (event.detail.value == 'BM_text1') this.textTrue = this.text1;
+    else this.textTrue = this.text2;
   }
   async alerta(s) {
     const alert = await this.alertController.create({
@@ -128,14 +130,7 @@ export class PreguntaPage implements OnInit {
 
     await alert.present();
   }
-  private checkId() {
-    for (let p of this.preguntes) {
-      if (p.BM_id == this.id) {
-        this.alerta('Ya existe una pregunta con ese id');
-        break;
-      }
-    }
-  }
+
   private back() {
     this.modalController.dismiss();
   }

@@ -12,33 +12,31 @@ import {
   providedIn: 'root',
 })
 export class DiesService {
-  constructor(
-    public router: Router,
-    private afs: AngularFirestore,
-    private fire: AngularFireModule
-  ) {}
+  constructor(public router: Router, private afs: AngularFirestore) {}
   private dia = [];
 
   getDiesByNevera_Fecha(id: any, dia: any) {
-    const dataCollection: AngularFirestoreCollection<dies> = this.afs.collection<dies>(
-      'BM_Dies/',
-      (ref) => ref.where('BM_idNevera', '==', id).where('BM_dia', '==', dia)
-    );
+    const dataCollection: AngularFirestoreCollection<dies> =
+      this.afs.collection<dies>('BM_Dies/', (ref) =>
+        ref.where('BM_idNevera', '==', id).where('BM_dia', '==', dia)
+      );
 
-    return dataCollection;
+    return dataCollection.get().toPromise();
   }
 
-  put(dia) {}
-  addDia(dia: dies) {
-    if (dia.id == '0') {
-      this.afs.collection('BM_Dies/').add(dia);
-    } else {
-      this.afs
-        .collection('BM_Dies/')
-        .doc(dia.id)
-        .set({ BM_temperatura: dia.BM_temperatura }, { merge: true });
-    }
+  addDia(dia: dies): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const id = dia.BM_id || this.afs.createId();
+        const data = { ...dia };
+        const result = await this.afs.collection('BM_Dies/').doc(id).set(data);
+        resolve(result);
+      } catch (err) {
+        reject(err.message);
+      }
+    });
   }
+
   prov(id: any, dia: any) {
     let s = this.afs.collection<dies>('BM_Dies/', (ref) =>
       ref.where('BM_idNevera', '==', id).where('BM_dia', '==', dia)

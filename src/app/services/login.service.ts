@@ -3,6 +3,7 @@ import { UsuarisService } from './BM_usuaris.service';
 import { Router } from '@angular/router';
 import { StoragesessionService } from './storagesession.service';
 import { AlertController } from '@ionic/angular';
+import { usuaris } from '../models/BM_usuaris';
 
 @Injectable({
   providedIn: 'root',
@@ -16,32 +17,34 @@ export class LoginService {
   ) {}
 
   rdo = false;
-  Usuari: any;
+  Usuari: usuaris;
 
-  async login(email, password) {
+  async login(email, password): Promise<boolean> {
     this.StgSesion.setSessionLoggedOut();
     try {
-      const user = this.UsuariService.getUsuari(email);
-      //const user = await this.auth.login(email, password);
-      user.subscribe((res) => {
-        if (res.length != 0) {
-          if (res[0].BM_password == password) {
-            let token = 'token';
-            let u = { username: email, token: token };
-            if (res[0].BM_tipus == 'admin') {
-              this.router.navigateByUrl('/auditories');
-              this.StgSesion.setSessionLogedIn(u, true);
-            } else {
-              this.StgSesion.setSessionLogedIn(u, false);
-              this.router.navigateByUrl('/temp');
-            }
+      const user = await this.UsuariService.getUsuari(email);
+      if (user.size === 0) {
+        this.loginAlert();
+        return true;
+      } else {
+        this.Usuari = user.docs[0].data();
+        if (this.Usuari.BM_password === password) {
+          let token = 'token';
+          let u = { username: email, token: token };
+          if (this.Usuari.BM_tipus === 'admin') {
+            this.router.navigateByUrl('/auditories');
+            this.StgSesion.setSessionLogedIn(u, true);
+            return true;
           } else {
-            this.loginAlert();
+            this.StgSesion.setSessionLogedIn(u, false);
+            this.router.navigateByUrl('/temp');
+            return true;
           }
         } else {
           this.loginAlert();
+          return true;
         }
-      });
+      }
     } catch (error) {
       console.log('Error->', error);
     }

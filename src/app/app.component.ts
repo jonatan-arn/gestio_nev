@@ -20,4 +20,7 @@ export class AppComponent {
     this.menu.enable(false);
     this.stgService.setSessionLoggedOut();
   }
+  closeMenu() {
+    this.menu.close();
+  }
 }

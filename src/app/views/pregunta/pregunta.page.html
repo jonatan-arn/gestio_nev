@@ -9,10 +9,6 @@
 
 <ion-content>
   <ion-item lines="full">
-    <ion-label position="floating">Id de la pregunta:</ion-label>
-    <ion-input [(ngModel)]="id" type="text" (ionBlur)="checkId()"></ion-input>
-  </ion-item>
-  <ion-item lines="full">
     <ion-label position="floating">Texto de la pregunta:</ion-label>
     <ion-input [(ngModel)]="text" type="text"></ion-input>
   </ion-item>
@@ -56,18 +52,6 @@
   </ion-card>
 
   <ion-card *ngIf="tipo=='text'"></ion-card>
-
-  <ion-card *ngIf="tipo=='SliderNumero'">
-    <ion-item>
-      <ion-label>Introduce el rango de numeros</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-input [(ngModel)]="n1" type="number"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-input [(ngModel)]="n2" type="number"></ion-input>
-    </ion-item>
-  </ion-card>
 
   <ion-card *ngIf="tipo=='sliderIcono'"></ion-card>
 

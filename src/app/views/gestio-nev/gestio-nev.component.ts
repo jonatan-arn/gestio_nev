@@ -1,17 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { dies, NuevoDia } from '../../models/BM_Dies';
+import { dies } from '../../models/BM_Dies';
 import { nevera } from '../../models/BM_Nevera';
 import { DiesService } from '../../services/BM_Dies.service';
 import { NeveraService } from '../../services/BM_Nevera.service';
 import { StoragesessionService } from '../../services/storagesession.service';
 import { UsuarisService } from '../../services/BM_usuaris.service';
 import { formatDate } from '@angular/common';
-import { MenuController, ToastController } from '@ionic/angular';
+import {
+  LoadingController,
+  MenuController,
+  ToastController,
+} from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { localitat } from '../../models/BM_Localitat';
 import { LocalitatService } from '../../services/BM_Localitat.service';
 import { AppComponent } from 'src/app/app.component';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
+import { usuaris } from 'src/app/models/BM_usuaris';
 
 @Component({
   selector: 'app-gestio-nev',
@@ -22,15 +29,16 @@ export class GestioNevComponent implements OnInit {
   private todayDate;
   private yesterdayDate;
   errorMessage = '';
-  private neveres: nevera[];
+  private neveres: nevera[] = [];
   private diesVista: dies[] = [];
   private diesVistaAux: dies[] = [];
-  private localitat: localitat[];
-
+  private localitat: localitat;
+  private usuari: usuaris;
   private dia: dies;
   private check: boolean;
   private alertS: boolean = false;
   private date;
+  private loading;
 
   constructor(
     private DiesService: DiesService,
@@ -42,17 +50,17 @@ export class GestioNevComponent implements OnInit {
     private menu: MenuController,
     private emailComposer: EmailComposer,
     private LocalitatService: LocalitatService,
-    private menuView: AppComponent
+    private menuView: AppComponent,
+    private afs: AngularFirestore,
+    private loadingController: LoadingController
   ) {}
-  async presentToast() {
-    const toast = await this.toastController.create({
-      message: 'Temperatura guardada correctamente',
-      duration: 2000,
-    });
-    toast.present();
-  }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    this.loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Espere',
+    });
+    this.loading.present();
     if (this.StgSesion.isAdmin()) {
       this.menuView.admin = true;
     } else {
@@ -68,93 +76,98 @@ export class GestioNevComponent implements OnInit {
     let s = this.StgSesion.getSessionLoggedIn();
     this.getNeveres(s);
   }
-
-  getNeveres(user) {
-    this.UsuariService.getUsuari(user['username']).subscribe((res) => {
-      this.NeveraService.getNeveresbyLocalitat(res[0].BM_idLocalitat).subscribe(
-        (nev) => {
-          this.neveres = nev;
-          //Ordenar las neveras para la vista
-          this.neveres = this.neveres.sort((t1, t2) => {
-            const name1 = t1.BM_id;
-            const name2 = t2.BM_id;
-            if (name1 > name2) {
-              return 1;
-            }
-            if (name1 < name2) {
-              return -1;
-            }
-            return 0;
-          });
-          this.getDies(this.neveres, this.todayDate);
-          this.getYesterdayDies(this.neveres, this.yesterdayDate);
-        }
-      );
-      this.LocalitatService.getLocalitat(res[0].BM_idLocalitat).subscribe(
-        (loc) => {
-          this.localitat = loc;
-        }
-      );
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Temperatura guardada correctamente',
+      duration: 2000,
     });
+    toast.present();
   }
 
-  getYesterdayDies(nev, fecha) {
+  async getNeveres(user) {
+    console.log('hola');
+    const userSubs = await this.UsuariService.getUsuari2(user['username']);
+
+    this.usuari = userSubs.docs[0].data();
+
+    const neveres = await this.NeveraService.getNeveresbyLocalitat(
+      this.usuari.BM_idLocalitat
+    );
+    neveres.docs.forEach((res) => this.neveres.push(res.data()));
+    this.neveres = this.neveres.sort((t1, t2) => {
+      const name1 = t1.BM_id;
+      const name2 = t2.BM_id;
+      if (name1 > name2) {
+        return 1;
+      }
+      if (name1 < name2) {
+        return -1;
+      }
+      return 0;
+    });
+    const localitat = await this.LocalitatService.getLocalitat2(
+      this.usuari.BM_idLocalitat
+    );
+    this.localitat = localitat.docs[0].data();
+
+    this.getDies(this.neveres, this.todayDate);
+    this.getYesterdayDies(this.neveres, this.yesterdayDate);
+  }
+
+  async getYesterdayDies(nev, fecha) {
     for (let n of nev) {
-      this.DiesService.prov(n.BM_id, fecha);
-      this.DiesService.getDiesByNevera_Fecha(n.BM_id, fecha)
-        .get()
-        .subscribe((res) => {
-          if (res.empty) {
-            this.check = true;
-            if (this.alertS == false) {
-              this.alertTemp(
-                'Las temperaturas de ayer no estan introducidas, introducelas.'
-              );
-              this.alertS = true;
-            }
-          } else {
-            this.check = false;
-          }
-          res.docs.forEach((doc) => {
-            if (doc.exists) {
-            }
-          });
-        });
+      const diesDB = await this.DiesService.getDiesByNevera_Fecha(
+        n.BM_id,
+        fecha
+      );
+      if (diesDB.size === 0) {
+        this.check = true;
+        if (this.alertS == false) {
+          this.alertTemp(
+            'Las temperaturas de ayer no estan introducidas, introducelas.'
+          );
+          this.alertS = true;
+        }
+      } else {
+        this.check = false;
+      }
     }
   }
-  async alertTemp(s) {
+  async alertTemp(missatge) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Error',
-      message: s,
+      message: missatge,
       buttons: ['OK'],
     });
 
     await alert.present();
   }
   //Metode que rep una nevera i un dia
-  getDies(nev, fecha) {
+  async getDies(nev, fecha) {
     for (let n of nev) {
-      this.DiesService.getDiesByNevera_Fecha(n.BM_id, fecha)
-        .get()
-        .subscribe((res) => {
-          if (!res.empty) {
-            res.docs.forEach((doc) => {
-              this.diesVista.push(
-                NuevoDia(
-                  doc.id,
-                  doc.data().BM_dia,
-                  doc.data().BM_temperatura,
-                  doc.data().BM_idNevera
-                )
-              );
-            });
-          } else {
-            this.dia = NuevoDia(0, fecha, 0, n.BM_id);
-            this.diesVista.push(this.dia);
-          }
+      const diesDB = await this.DiesService.getDiesByNevera_Fecha(
+        n.BM_id,
+        fecha
+      );
+
+      if (diesDB.size == 0) {
+        this.dia = new dies(this.afs.createId(), fecha, 0, n.BM_id);
+        this.diesVista.push(this.dia);
+      } else {
+        diesDB.docs.forEach((doc) => {
+          this.diesVista.push(
+            new dies(
+              doc.id,
+              doc.data().BM_dia,
+              doc.data().BM_temperatura,
+              doc.data().BM_idNevera
+            )
+          );
         });
+      }
     }
+    this.loading.dismiss();
   }
 
   //Metode que se ejectua quan es canvia de dia amb el datePicker

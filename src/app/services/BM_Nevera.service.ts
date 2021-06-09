@@ -12,10 +12,10 @@ export class NeveraService {
   constructor(private afs: AngularFirestore) {}
 
   getNeveresbyLocalitat(idLocalitat: any) {
-    const dataCollection: AngularFirestoreCollection<nevera> = this.afs.collection<nevera>(
-      'BM_Nevera/',
-      (ref) => ref.where('BM_idLocalitat', '==', idLocalitat)
-    );
-    return dataCollection.valueChanges();
+    const dataCollection: AngularFirestoreCollection<nevera> =
+      this.afs.collection<nevera>('BM_Nevera/', (ref) =>
+        ref.where('BM_idLocalitat', '==', idLocalitat)
+      );
+    return dataCollection.get().toPromise();
   }
 }
