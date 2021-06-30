@@ -1,3 +1,5 @@
+import { opcio } from './BM_opcio';
+
 /*
 Model de pregunta radio button 
   BM_resultat (number): resultat introduit per el usuari
@@ -7,7 +9,7 @@ Model de pregunta radio button
 export class radio {
   BM_resultat: string;
   BM_id: string;
-  BM_opcions: any;
+  BM_opcions: opcio[];
   constructor(resultat, id, opcions) {
     this.BM_resultat = resultat;
     this.BM_id = id;

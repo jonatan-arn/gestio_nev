@@ -20,15 +20,10 @@ export class LoginComponent implements OnInit {
   user: string;
   pwd: string;
   token: any;
-  admin: boolean;
   loading;
   constructor(
-    private stgService: StoragesessionService,
     private loginService: LoginService,
-    private auditoria: AuditoriesPage,
     private menu: MenuController,
-    private app: AppComponent,
-    private UsuariService: UsuarisService,
     private plt: Platform,
     public loadingController: LoadingController
   ) {}

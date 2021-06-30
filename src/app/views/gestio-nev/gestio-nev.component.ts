@@ -61,7 +61,7 @@ export class GestioNevComponent implements OnInit {
       message: 'Espere',
     });
     this.loading.present();
-    if (this.StgSesion.isAdmin()) {
+    if (this.StgSesion.isAdmin() || this.StgSesion.isAuditor()) {
       this.menuView.admin = true;
     } else {
       this.menuView.admin = false;
@@ -86,13 +86,14 @@ export class GestioNevComponent implements OnInit {
 
   async getNeveres(user) {
     console.log('hola');
-    const userSubs = await this.UsuariService.getUsuari2(user['username']);
 
-    this.usuari = userSubs.docs[0].data();
+    this.usuari = this.StgSesion.userLog;
 
     const neveres = await this.NeveraService.getNeveresbyLocalitat(
       this.usuari.BM_idLocalitat
-    );
+    )
+      .get()
+      .toPromise();
     neveres.docs.forEach((res) => this.neveres.push(res.data()));
     this.neveres = this.neveres.sort((t1, t2) => {
       const name1 = t1.BM_id;
@@ -119,7 +120,9 @@ export class GestioNevComponent implements OnInit {
       const diesDB = await this.DiesService.getDiesByNevera_Fecha(
         n.BM_id,
         fecha
-      );
+      )
+        .get()
+        .toPromise();
       if (diesDB.size === 0) {
         this.check = true;
         if (this.alertS == false) {
@@ -149,7 +152,9 @@ export class GestioNevComponent implements OnInit {
       const diesDB = await this.DiesService.getDiesByNevera_Fecha(
         n.BM_id,
         fecha
-      );
+      )
+        .get()
+        .toPromise();
 
       if (diesDB.size == 0) {
         this.dia = new dies(this.afs.createId(), fecha, 0, n.BM_id);

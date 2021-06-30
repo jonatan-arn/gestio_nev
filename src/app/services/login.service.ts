@@ -22,21 +22,25 @@ export class LoginService {
   async login(email, password): Promise<boolean> {
     this.StgSesion.setSessionLoggedOut();
     try {
-      const user = await this.UsuariService.getUsuari(email);
+      const user = await this.UsuariService.getUsuari(email).get().toPromise();
       if (user.size === 0) {
         this.loginAlert();
         return true;
       } else {
         this.Usuari = user.docs[0].data();
+        this.StgSesion.userLog = this.Usuari;
         if (this.Usuari.BM_password === password) {
           let token = 'token';
           let u = { username: email, token: token };
-          if (this.Usuari.BM_tipus === 'admin') {
+          if (
+            this.Usuari.BM_tipus === 'admin' ||
+            this.Usuari.BM_tipus == 'auditor'
+          ) {
             this.router.navigateByUrl('/auditories');
-            this.StgSesion.setSessionLogedIn(u, true);
+            this.StgSesion.setSessionLogedIn(u);
             return true;
           } else {
-            this.StgSesion.setSessionLogedIn(u, false);
+            this.StgSesion.setSessionLogedIn(u);
             this.router.navigateByUrl('/temp');
             return true;
           }

@@ -1,3 +1,4 @@
+<!--Vista de login-->
 <ion-header no-border>
   <div class="login-header ion-padding">
     <img class="logo-img" src="assets/icon/blat-market.png" />
@@ -8,7 +9,6 @@
 </ion-header>
 
 <ion-content>
-
   <form (ngSubmit)="logIn()">
     <ion-item lines="full">
       <ion-label position="floating">Usuario</ion-label>
@@ -20,10 +20,18 @@
     </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button type="submit" mat-raised-button color="primary" class="ion-button-class" shape="round" fill="solid"
-          expand="block" size="medium">Continuar</ion-button>
+        <ion-button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          class="ion-button-class"
+          shape="round"
+          fill="solid"
+          expand="block"
+          size="medium"
+          >Continuar</ion-button
+        >
       </ion-col>
     </ion-row>
   </form>
-
 </ion-content>

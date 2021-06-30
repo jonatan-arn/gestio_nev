@@ -5,6 +5,7 @@ import {
   ModalController,
   NavController,
 } from '@ionic/angular';
+import { opcio } from 'src/app/models/BM_opcio';
 import { AuditoriesService } from 'src/app/services/BM_Auditories.service';
 import { checkbox } from '../../models/BM_checkbox';
 import { numero } from '../../models/BM_numero';
@@ -32,15 +33,12 @@ export class PreguntaPage implements OnInit {
   imatge: boolean;
   comentari: boolean;
   perill: boolean;
-
+  id: string;
   text1: string;
   text2: string;
+  ArraySINO: opcio[] = [{ BM_checked: false }];
 
-  radioButtonArray: any = [
-    {
-      value: '',
-    },
-  ];
+  radioButtonArray: opcio[] = [{ BM_checked: false }];
   checkboxArray: any = [
     {
       value: '',
@@ -75,7 +73,7 @@ export class PreguntaPage implements OnInit {
     });
   }
   AddRadio() {
-    this.radioButtonArray.push({ value: '' });
+    this.radioButtonArray.push({ BM_checked: false });
   }
   AddCheck() {
     this.checkboxArray.push({ value: '', isItemChecked: false });

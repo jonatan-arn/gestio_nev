@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar
+    ><ion-button slot="start" fill="clear" (click)="back()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="userForm" (ngSubmit)="addUser()">
+    <ion-item>
+      <ion-label>Nombre:</ion-label>
+      <ion-input formControlName="user"></ion-input>
+
+      <ion-label
+        color="danger"
+        *ngIf="user.hasError('required') && (userForm.touched || userForm.dirty)"
+        >* El nombre es obligatorio
+      </ion-label>
+      <ion-label
+        color="danger"
+        *ngIf="user.hasError('isValid') && (userForm.touched || userForm.dirty)"
+        >* El nombre usuario ya existe
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Contraseña:</ion-label>
+      <ion-input type="password" formControlName="pwd"></ion-input>
+
+      <ion-label
+        color="danger"
+        *ngIf="pwd.hasError('required') && (pwd.touched || pwd.dirty)"
+        >* La contraseña es obligatoria
+      </ion-label>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Repita la contraseña:</ion-label>
+      <ion-input type="password" formControlName="pwd2"></ion-input>
+
+      <ion-label
+        color="danger"
+        *ngIf="pwd2.hasError('matchOtherValidator') && (pwd2.touched || pwd2.dirty)"
+        >* Las contraseñas tienen que ser iguales
+      </ion-label>
+      <ion-label
+        color="danger"
+        *ngIf="pwd2.hasError('required') && (pwd2.touched || pwd2.dirty)"
+        >* La contraseña es obligatoria
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        placeholder="Selecciona uno"
+        formControlName="tipo"
+        (ionChange)="addTipo($event)"
+      >
+        <ion-select-option value="admin">Administrador</ion-select-option>
+        <ion-select-option value="auditor">Auditor</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button type="submit" [disabled]="!userForm.valid">Guardar</ion-button>
+  </form>
+</ion-content>

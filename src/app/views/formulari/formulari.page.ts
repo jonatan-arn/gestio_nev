@@ -31,7 +31,7 @@ pdfMake.vfs = pdfFont.pdfMake.vfs;
 export class FormulariPage implements OnInit {
   logoData = null;
   private usuari: usuaris;
-  private neveres: nevera[];
+  private neveres: nevera[] = [];
   pdfObj = null;
   private diesVista: dies[] = [];
   private localitat: localitat[];
@@ -40,6 +40,7 @@ export class FormulariPage implements OnInit {
   private check = true;
   private loading;
   private a = true;
+
   constructor(
     private plt: Platform,
     private http: HttpClient,
@@ -57,7 +58,7 @@ export class FormulariPage implements OnInit {
   ngOnInit() {
     this.loadLocalAssetToBase64();
   }
-
+  //Obri el calendari, l'usuair selecciona dos dates i genera el pdf
   async openCalendar() {
     const options: CalendarModalOptions = {
       pickMode: 'range',
@@ -80,7 +81,6 @@ export class FormulariPage implements OnInit {
     const date = event.data;
     const from: CalendarResult = date.from;
     const to: CalendarResult = date.to;
-
     this.from = new Date(from.string);
     this.to = new Date(to.string);
     this.loading = await this.loadingController.create({
@@ -88,15 +88,13 @@ export class FormulariPage implements OnInit {
       message: 'Espere',
     });
     this.loading.present();
-    await this.getPdfData();
-
-    console.log(this.a);
+    this.getPdfData();
   }
 
   openMenu() {
     this.menu.toggle();
   }
-
+  //Carregar la imatge per al pdf
   loadLocalAssetToBase64() {
     this.http
       .get('./assets/icon/blat-market.png', { responseType: 'blob' })
@@ -108,39 +106,42 @@ export class FormulariPage implements OnInit {
         reader.readAsDataURL(res);
       });
   }
-
+  //Metode que genera el pdf
   async getPdfData() {
+    this.diesVista = [];
     let s = this.StgSesion.getSessionLoggedIn();
-    const user = await this.UsuariService.getUsuari(s['username']);
-    this.usuari = user.docs[0].data();
-    this.a = false;
-    this.LocalitatService.getLocalitat(this.usuari.BM_idLocalitat).subscribe(
-      (loc) => {
-        this.localitat = loc;
-      }
-    );
-    const neveres = await this.NeveraService.getNeveresbyLocalitat(
-      this.usuari.BM_idLocalitat
-    );
-    neveres.docs.forEach((res) => this.neveres.push(res.data()));
+    //Agafa l'usuari que ha fet login
+    const user = this.StgSesion.userLog;
 
-    //Ordenar las neveras para la vista
-    this.neveres = this.neveres.sort((t1, t2) => {
-      const name1 = t1.BM_id;
-      const name2 = t2.BM_id;
-      if (name1 > name2) {
-        return 1;
-      }
-      if (name1 < name2) {
-        return -1;
-      }
-      return 0;
+    this.a = false;
+    //Amb l'usuair agafa la localitat d'aquest
+    this.LocalitatService.getLocalitat(user.BM_idLocalitat).subscribe((loc) => {
+      this.localitat = loc;
     });
-    await this.getfechadies().then(() => {});
-    console.log(this.diesVista);
+    //Agafe totes les neveres per localitat de l'usuari
+    this.NeveraService.getNeveresbyLocalitat(user.BM_idLocalitat)
+      .valueChanges()
+      .subscribe(async (nev) => {
+        this.neveres = nev;
+
+        //Ordenar las neveras para la vista
+        this.neveres = this.neveres.sort((t1, t2) => {
+          const name1 = t1.BM_id;
+          const name2 = t2.BM_id;
+          if (name1 > name2) {
+            return 1;
+          }
+          if (name1 < name2) {
+            return -1;
+          }
+          return 0;
+        });
+        await this.getfechadies();
+      });
 
     console.log(this.a);
   }
+  //Bucle que agafa les temperatures de la base de dades
   async getfechadies() {
     while (this.from.getDate() <= this.to.getDate()) {
       this.getDies(formatDate(this.from, 'yyyy-MM-dd', 'en'));
@@ -150,11 +151,13 @@ export class FormulariPage implements OnInit {
 
   async getDies(fecha) {
     for (var i = 0; i < this.neveres.length; i++) {
-      const s = await this.DiesService.getDiesByNevera_Fecha(
+      let s = await this.DiesService.getDiesByNevera_Fecha(
         this.neveres[i].BM_id,
         fecha
-      );
-      s.docs.forEach((doc) => {
+      )
+        .get()
+        .toPromise();
+      s.forEach((doc) => {
         this.diesVista.push(
           new dies(
             doc.id,
@@ -165,12 +168,12 @@ export class FormulariPage implements OnInit {
         );
       });
     }
-    console.log(this.diesVista);
     this.loading.dismiss();
     this.check = false;
   }
 
   generatePDF() {
+    //Canvia el idNevera de un objecete dia  per el nom de la nevera i les ordena, per a una millor vista en la tabla
     this.changeName();
     let logo = { image: this.logoData, width: 50 };
 

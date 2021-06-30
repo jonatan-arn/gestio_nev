@@ -1,3 +1,5 @@
+import { opcio } from './BM_opcio';
+
 /*
 Model de pregunta si/no
   BM_resultat (number): text de la opcio que ha selecciona el usuari

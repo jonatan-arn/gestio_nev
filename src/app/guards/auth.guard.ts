@@ -11,6 +11,7 @@ import { StoragesessionService } from '../services/storagesession.service';
 @Injectable({
   providedIn: 'root',
 })
+//Clase que comprova que l'usuari ha fet login i sino no pot accedir a les vistes
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,

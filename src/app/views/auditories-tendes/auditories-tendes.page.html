@@ -1,14 +1,35 @@
+<!--Vista de les audories realitzades i sobre que tenda se han realitzat-->
 <ion-header>
   <ion-toolbar>
     <ion-button fill="clear" slot="start">
-      <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
+      <ion-menu-button autoHide="false"></ion-menu-button>
     </ion-button>
     <ion-title>auditories-tendes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let auditoria of auditories$ | async">
+  <ion-button expand="full" (click)="openCalendar()" color="secondary">
+    <ion-icon name="calendar-outline"></ion-icon
+  ></ion-button>
+  <ion-select
+    (ionChange)="filterAuditoria($event)"
+    placeholder="Selecciona la tienda"
+    #mySelect
+    cancelText="Cancelar"
+    okText="Ok"
+  >
+    <ion-select-option
+      *ngFor="let tenda of localitats$ | async"
+      value="{{tenda.BM_ID}}"
+    >
+      {{tenda.BM_ID}}
+    </ion-select-option>
+  </ion-select>
+  <ion-button expand="full" (click)="resetAuditories()" color="secondary">
+    <ion-icon name="close-outline"> </ion-icon>
+  </ion-button>
+  <ion-list *ngFor="let auditoria of auditories">
     <span *ngFor="let localitat of localitats$ | async">
       <ion-card
         *ngIf="auditoria.BM_tendaId == localitat.BM_ID"
@@ -19,8 +40,16 @@
             {{auditoria.BM_nom}}
             <p>{{localitat.BM_direccio}} - {{localitat.BM_Poblacio}}</p>
             <p>{{auditoria.BM_data}}</p>
-            <p>{{auditoria.BM_Resultat}}%</p>
+            <p>{{auditoria.BM_Resultat | number:'1.0-0'}}%</p>
           </ion-label>
+          <ion-button
+            (click)="generatePDF(localitat,auditoria)"
+            expand="block"
+            fill="clear"
+            shape="round"
+          >
+            <ion-icon name="arrow-down-circle-outline"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-card>
     </span>

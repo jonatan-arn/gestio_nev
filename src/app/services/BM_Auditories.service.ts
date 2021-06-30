@@ -98,50 +98,41 @@ export class AuditoriesService {
       );
       */
   }
-  getAllCheckbox() {
+  getAllPreguntesAuditoria(auditoria: auditories) {
     return this.afs
-      .collection<checkbox>('BM_Checkbox')
+      .collection<pregunta>('BM_Preguntes', (ref) =>
+        ref.where('BM_auditoriaId', '==', auditoria.BM_id)
+      )
+      .get()
+      .toPromise();
+  }
+  getAllCheckbox() {
+    return this.afs.collection<checkbox>('BM_Checkbox').get().toPromise();
+    /*
       .snapshotChanges()
       .pipe(
         map((action) => action.map((a) => a.payload.doc.data() as checkbox))
       );
+      */
   }
   getAllRadio() {
-    return this.afs
-      .collection<radio>('BM_Radio')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as radio)));
+    return this.afs.collection<radio>('BM_Radio').get().toPromise();
   }
   getAllSiNo() {
-    return this.afs
-      .collection<si_no>('BM_SiNo')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as si_no)));
+    return this.afs.collection<si_no>('BM_SiNo').get().toPromise();
   }
   getAllNumero() {
-    return this.afs
-      .collection<numero>('BM_Numero')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as numero)));
+    return this.afs.collection<numero>('BM_Numero').get().toPromise();
   }
   getAllSlider() {
-    return this.afs
-      .collection<slider>('BM_Slider')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as slider)));
+    return this.afs.collection<slider>('BM_Slider').get().toPromise();
   }
   getAllSmile() {
-    return this.afs
-      .collection<smile>('BM_Smile')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as smile)));
+    return this.afs.collection<smile>('BM_Smile').get().toPromise();
   }
 
   getAllText() {
-    return this.afs
-      .collection<text>('BM_Text')
-      .snapshotChanges()
-      .pipe(map((action) => action.map((a) => a.payload.doc.data() as text)));
+    return this.afs.collection<text>('BM_Text').get().toPromise();
   }
 
   onDelete(id: string, collection: string): Promise<void> {

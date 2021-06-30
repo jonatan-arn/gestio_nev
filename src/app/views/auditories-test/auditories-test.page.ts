@@ -10,9 +10,11 @@ import {
   NavController,
   ToastController,
 } from '@ionic/angular';
+
 import { auditories } from 'src/app/models/BM_Auditories';
 import { checkbox } from 'src/app/models/BM_checkbox';
 import { numero } from 'src/app/models/BM_numero';
+import { opcio } from 'src/app/models/BM_opcio';
 import { pregunta } from 'src/app/models/BM_Pregunta';
 import { preguntaCreacio } from 'src/app/models/BM_PreguntaCreacio';
 import { radio } from 'src/app/models/BM_Radio';
@@ -68,11 +70,10 @@ export class AuditoriesTestPage implements OnInit {
   async ngOnInit() {
     this.aud = this.AuditoriesService.getAuditoria();
     this.esView = this.AuditoriesService.getEsView();
-    this.adminView = this.stgService.isAdmin();
-    const user = await this.userService.getUsuari(
-      this.stgSesion.getUsuari()['username']
-    );
-    this.user = user.docs[0].data();
+    if (this.stgService.isAdmin() || this.stgService.isAuditor())
+      this.adminView = true;
+
+    this.user = this.stgSesion.userLog;
 
     console.log(this.aud);
     this.loading = await this.loaginController.create({
@@ -85,18 +86,7 @@ export class AuditoriesTestPage implements OnInit {
         await this.AuditoriesService.getAllPreguntesTenda();
       preguntesTenda.docs.forEach((doc) => {
         if (doc.data().BM_auditoriaId === this.aud.BM_id) {
-          this.preguntes.push(
-            new pregunta(
-              doc.data().BM_id,
-              doc.data().BM_nom,
-              doc.data().BM_imatge,
-              doc.data().BM_comentari,
-              doc.data().BM_puntuacio,
-              doc.data().BM_perill,
-              doc.data().BM_auditoriaId,
-              doc.data().BM_tipo
-            )
-          );
+          this.preguntes.push(doc.data());
           this.preguntesTenda.push(doc.data());
         }
       });
@@ -124,85 +114,37 @@ export class AuditoriesTestPage implements OnInit {
       });
       this.getAllPreguntes(this.Arraypreguntes);
     }
-    console.log(this.Arraycheckbox);
-    console.log(this.Arraynumeros);
-    console.log(this.Arraypreguntes);
-    console.log(this.Arrayradio);
-    console.log(this.Arraysi_no);
-    console.log(this.Arrayslider);
-    console.log(this.Arraysmile);
-    console.log(this.Arraytext);
   }
 
-  getAllPreguntes(preguntes) {
-    this.AuditoriesService.getAllCheckbox().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arraycheckbox.push(res[i]);
-          }
-        }
-    });
+  async getAllPreguntes(preguntes) {
+    const checkboxDB = await this.AuditoriesService.getAllCheckbox();
+    if (checkboxDB.size != 0)
+      checkboxDB.forEach((doc) => this.Arraycheckbox.push(doc.data()));
 
-    this.AuditoriesService.getAllRadio().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arrayradio.push(res[i]);
-          }
-        }
-    });
+    const radioDB = await this.AuditoriesService.getAllRadio();
+    if (radioDB.size != 0)
+      radioDB.forEach((doc) => this.Arrayradio.push(doc.data()));
 
-    this.AuditoriesService.getAllSlider().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arrayslider.push(res[i]);
-          }
-        }
-    });
+    const sliderDB = await this.AuditoriesService.getAllSlider();
+    if (sliderDB.size != 0)
+      sliderDB.forEach((doc) => this.Arrayslider.push(doc.data()));
 
-    this.AuditoriesService.getAllSmile().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arraysmile.push(res[i]);
-          }
-        }
-    });
+    const smileDB = await this.AuditoriesService.getAllSmile();
+    if (smileDB.size != 0)
+      smileDB.forEach((doc) => this.Arraysmile.push(doc.data()));
 
-    this.AuditoriesService.getAllSiNo().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arraysi_no.push(res[i]);
-          }
-        }
-    });
+    const SiNoDB = await this.AuditoriesService.getAllSiNo();
+    if (SiNoDB.size != 0)
+      SiNoDB.forEach((doc) => this.Arraysi_no.push(doc.data()));
 
-    this.AuditoriesService.getAllText().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id) this.Arraytext.push(res[i]);
-          }
-        }
-    });
+    const textDB = await this.AuditoriesService.getAllText();
+    if (textDB.size != 0)
+      textDB.forEach((doc) => this.Arraytext.push(doc.data()));
 
-    this.AuditoriesService.getAllNumero().subscribe((res) => {
-      if (res[0] != undefined)
-        for (var i = 0; i < res.length; i++) {
-          for (var j = 0; j < preguntes.length; j++) {
-            if (res[i].BM_id == preguntes[j].BM_id)
-              this.Arraynumeros.push(res[i]);
-          }
-        }
-    });
+    //Accedit a totes les preguntes tipus numero de la base de dades
+    const numeroDB = await this.AuditoriesService.getAllNumero();
+    if (numeroDB.size != 0)
+      numeroDB.forEach((doc) => this.Arraynumeros.push(doc.data()));
   }
   back() {
     this.router.back();
@@ -210,7 +152,6 @@ export class AuditoriesTestPage implements OnInit {
   guardar() {
     if (!this.validarForm()) {
       this.aud.BM_data = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-      this.aud.BM_tendaId = this.user.BM_idLocalitat;
       this.aud.BM_Resultat = 0;
       const id = this.aud.BM_id;
       let puntuacio_total = 0;
@@ -306,6 +247,7 @@ export class AuditoriesTestPage implements OnInit {
         }
       }
       puntuacio_user = 100 * (puntuacio_user / puntuacio_total);
+
       this.aud.BM_Resultat = puntuacio_user;
       this.AuditoriesService.onSaveAudTenda(this.aud, 'BM_AuditoriesTenda');
       this.aud.BM_id = id;
@@ -315,14 +257,20 @@ export class AuditoriesTestPage implements OnInit {
   }
   radioSiNo(event, id) {
     this.Arraysi_no.forEach((value, index) => {
-      if (value.BM_id == id)
-        this.Arraysi_no[index].BM_resultat = event.detail.value;
+      if (value.BM_id == id) {
+      }
+      this.Arraysi_no[index].BM_resultat = event.detail.value;
     });
   }
   radioE(event, id) {
     this.Arrayradio.forEach((value, index) => {
-      if (value.BM_id == id)
+      if (value.BM_id == id) {
+        this.Arrayradio[index].BM_opcions.forEach((value2, index2) => {
+          if (value2.value == event.detail.value)
+            this.Arrayradio[index].BM_opcions[index2].BM_checked = true;
+        });
         this.Arrayradio[index].BM_resultat = event.detail.value;
+      }
     });
   }
 

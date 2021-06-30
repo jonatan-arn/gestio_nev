@@ -12,4 +12,11 @@ export class usuaris {
   BM_password: string;
   BM_idLocalitat: number;
   BM_tipus: string;
+  constructor(id, user, password, localitat, tipus) {
+    this.BM_id = id;
+    BM_user: user;
+    BM_password: password;
+    BM_idLocalitat: localitat;
+    BM_tipus: tipus;
+  }
 }

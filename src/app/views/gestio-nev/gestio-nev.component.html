@@ -1,3 +1,4 @@
+<!--Vista per a guardar les temperatures-->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-button fill="clear" slot="start">
@@ -19,6 +20,8 @@
       [max]="todayDate"
       [value]="todayDate"
       (ionChange)="updateDay($event)"
+      cancelText="Cancelar"
+      doneText="Ok"
     >
     </ion-datetime>
   </ion-item>

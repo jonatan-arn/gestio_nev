@@ -16,6 +16,6 @@ export class NeveraService {
       this.afs.collection<nevera>('BM_Nevera/', (ref) =>
         ref.where('BM_idLocalitat', '==', idLocalitat)
       );
-    return dataCollection.get().toPromise();
+    return dataCollection;
   }
 }

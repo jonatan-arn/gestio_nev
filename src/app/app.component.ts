@@ -8,18 +8,12 @@ import { StoragesessionService } from './services/storagesession.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  //Variables que comproven si l'usuari que fa login es admin o tenda
   admin = false;
   tenda = true;
-  constructor(
-    private stgService: StoragesessionService,
-    private menu: MenuController
-  ) {}
+  constructor(private menu: MenuController) {}
   ngOnInit(): void {}
-  logOut() {
-    this.menu.close();
-    this.menu.enable(false);
-    this.stgService.setSessionLoggedOut();
-  }
+
   closeMenu() {
     this.menu.close();
   }

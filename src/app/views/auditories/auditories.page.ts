@@ -72,16 +72,14 @@ export class AuditoriesPage implements OnInit {
         return res;
       })
     );
-    //Comprovar si es administrador
-    if (this.stgService.isAdmin()) {
+    //Comprovar si es administrador o auditor
+    if (this.stgService.isAdmin() || this.stgService.isAuditor()) {
       this.menuView.admin = true;
       this.admin = true;
     } else {
       this.menuView.admin = false;
       this.admin = false;
     }
-
-    console.log(this.admin);
     this.menu.enable(true);
   }
   //Al doble click en la auditoria obri la llista de id de tendes

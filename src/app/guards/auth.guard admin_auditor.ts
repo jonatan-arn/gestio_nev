@@ -13,7 +13,7 @@ import { StoragesessionService } from '../services/storagesession.service';
   providedIn: 'root',
 })
 //Clase que comprova que l'usuari es admin i sino no pot accedir a certes vistes
-export class AuthGuardAdmin implements CanActivate {
+export class AuthGuardAdminAuditor implements CanActivate {
   constructor(
     private router: Router,
     private storagesession: StoragesessionService
@@ -27,7 +27,7 @@ export class AuthGuardAdmin implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    if (this.storagesession.isAdmin()) {
+    if (this.storagesession.isAdmin() || this.storagesession.isAuditor()) {
       return true;
     }
     this.router.navigateByUrl('/temp');

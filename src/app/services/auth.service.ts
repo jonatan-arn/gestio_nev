@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AlertController } from '@ionic/angular';
 import { user, usuaris } from '../models/BM_usuaris';
-
+4;
 @Injectable({
   providedIn: 'root',
 })

@@ -21,7 +21,7 @@ export class DiesService {
         ref.where('BM_idNevera', '==', id).where('BM_dia', '==', dia)
       );
 
-    return dataCollection.get().toPromise();
+    return dataCollection;
   }
 
   addDia(dia: dies): Promise<void> {
@@ -34,18 +34,6 @@ export class DiesService {
       } catch (err) {
         reject(err.message);
       }
-    });
-  }
-
-  prov(id: any, dia: any) {
-    let s = this.afs.collection<dies>('BM_Dies/', (ref) =>
-      ref.where('BM_idNevera', '==', id).where('BM_dia', '==', dia)
-    );
-    s.get().subscribe((ss) => {
-      ss.docs.forEach((doc) => {
-        this.dia.push(doc.data().BM_dia);
-        this.dia.push(doc.id);
-      });
     });
   }
 }

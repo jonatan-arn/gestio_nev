@@ -68,91 +68,37 @@ export class AuditoriesFormPage implements OnInit {
       const preguntes = await this.AuditoriesService.getAllPreguntes();
       preguntes.docs.forEach((doc) => {
         if (this.aud.BM_id == doc.data().BM_auditoriaId) {
-          this.preguntes.push(
-            new preguntaCreacio(
-              doc.data().BM_id,
-              doc.data().BM_nom,
-              doc.data().BM_imatge,
-              doc.data().BM_comentari,
-              doc.data().BM_puntuacio,
-              doc.data().BM_perill,
-              doc.data().BM_auditoriaId,
-              doc.data().BM_tipo
-            )
-          );
+          this.preguntes.push(doc.data());
         }
       });
       this.loading.dismiss();
+      const checkboxDB = await this.AuditoriesService.getAllCheckbox();
+      if (checkboxDB.size != 0)
+        checkboxDB.forEach((doc) => this.checkbox.push(doc.data()));
 
-      this.AuditoriesService.getAllCheckbox().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.checkbox.push(res[i]);
-            }
-          }
-      });
+      const radioDB = await this.AuditoriesService.getAllRadio();
+      if (radioDB.size != 0)
+        radioDB.forEach((doc) => this.radio.push(doc.data()));
 
-      this.AuditoriesService.getAllRadio().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.radio.push(res[i]);
-            }
-          }
-      });
+      const sliderDB = await this.AuditoriesService.getAllSlider();
+      if (sliderDB.size != 0)
+        sliderDB.forEach((doc) => this.slider.push(doc.data()));
 
-      this.AuditoriesService.getAllSlider().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.slider.push(res[i]);
-            }
-          }
-      });
+      const smileDB = await this.AuditoriesService.getAllSmile();
+      if (smileDB.size != 0)
+        smileDB.forEach((doc) => this.smile.push(doc.data()));
 
-      this.AuditoriesService.getAllSmile().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.smile.push(res[i]);
-            }
-          }
-      });
+      const SiNoDB = await this.AuditoriesService.getAllSiNo();
+      if (SiNoDB.size != 0)
+        SiNoDB.forEach((doc) => this.si_no.push(doc.data()));
 
-      this.AuditoriesService.getAllSiNo().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.si_no.push(res[i]);
-            }
-          }
-      });
+      const textDB = await this.AuditoriesService.getAllText();
+      if (textDB.size != 0) textDB.forEach((doc) => this.text.push(doc.data()));
 
-      this.AuditoriesService.getAllText().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.text.push(res[i]);
-            }
-          }
-      });
       //Accedit a totes les preguntes tipus numero de la base de dades
-      this.AuditoriesService.getAllNumero().subscribe((res) => {
-        if (res[0] != undefined)
-          for (var i = 0; i < res.length; i++) {
-            for (var j = 0; j < this.preguntes.length; j++) {
-              if (res[i].BM_id == this.preguntes[j].BM_id)
-                this.numeros.push(res[i]);
-            }
-          }
-      });
+      const numeroDB = await this.AuditoriesService.getAllNumero();
+      if (numeroDB.size != 0)
+        numeroDB.forEach((doc) => this.numeros.push(doc.data()));
     }
   }
   //Metode per poder seleccionar un nou tipus de pregunta i crear-la
@@ -200,14 +146,14 @@ export class AuditoriesFormPage implements OnInit {
           },
           {
             text: 'Si/No',
-            icon: 'heart',
+            icon: 'checkmark-done-outline',
             handler: () => {
               this.presentModal('si/no');
             },
           },
           {
             text: 'Numero',
-            icon: 'heart',
+            icon: './assets/iconicons8-logic-data-types-48.png',
             handler: () => {
               this.presentModal('numero');
             },
@@ -258,9 +204,11 @@ export class AuditoriesFormPage implements OnInit {
     }
   }
   back() {
-    if (this.preguntes.length == 0)
-      this.alerta('Esta auditoria no tiene creada ninguna pregunta');
-    else this.modalController.dismiss();
+    if (this.aud != null) {
+      if (this.preguntes.length == 0)
+        this.alerta('Esta auditoria no tiene creada ninguna pregunta');
+      else this.modalController.dismiss();
+    } else this.modalController.dismiss();
   }
   async alerta(s) {
     const alert = await this.alertController.create({
@@ -420,7 +368,6 @@ export class AuditoriesFormPage implements OnInit {
         this.preguntes.splice(i, 1);
       }
     }
-    this.preguntes = [];
   }
   private checkId() {
     console.log(this.auditoriesAux);
