@@ -7,7 +7,11 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { AlertController, NavController } from '@ionic/angular';
+import {
+  AlertController,
+  NavController,
+  ToastController,
+} from '@ionic/angular';
 import { NameValidator } from 'src/app/validators/NameValidator';
 import { UsuarisService } from 'src/app/services/BM_usuaris.service';
 import { matchOtherValidator } from 'src/app/validators/PasswordValidator';
@@ -33,7 +37,8 @@ export class UserAddPage implements OnInit {
     private alertController: AlertController,
     private userService: UsuarisService,
     private router: NavController,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastController: ToastController
   ) {
     this.userForm = this.fb.group({
       user: [
@@ -60,9 +65,21 @@ export class UserAddPage implements OnInit {
     const check = await NameValidator.isValid(user, this.userService);
     if (check == true) {
       this.alerta('Ya existe un usuario con ese nombre');
-    } else this.userService.addUser(user, pwd, tipo);
+    } else {
+      const promesa = this.userService.addUser(user, pwd, tipo);
+      promesa.then(() => {
+        this.presentToast('Usuario guardado correctamente');
+        this.router.back();
+      });
+    }
   }
-
+  async presentToast(missatge: string) {
+    const toast = await this.toastController.create({
+      message: missatge,
+      duration: 2000,
+    });
+    toast.present();
+  }
   addTipo(event) {
     this.tipo = event.detail.value;
   }

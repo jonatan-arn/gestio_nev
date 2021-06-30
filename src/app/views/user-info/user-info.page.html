@@ -11,7 +11,9 @@
 </ion-header>
 
 <ion-content>
-  <div>Nombre usuario: {{user.BM_user}}</div>
+  <div class="DivnomUser">
+    <ion-label position="stacked">Nombre usuario: {{user.BM_user}}</ion-label>
+  </div>
   <ion-button
     *ngIf="EsAdmin"
     (click)="addUser()"
@@ -23,5 +25,14 @@
   </ion-button>
   <ion-button expand="block" fill="clear" shape="round" (click)="logOut()">
     <ion-icon name="log-out-outline"></ion-icon>
+  </ion-button>
+  <ion-button
+    expand="block"
+    fill="clear"
+    shape="round"
+    (click)="delUser()"
+    *ngIf="EsAdmin || EsAuditor"
+  >
+    Borrar usuario
   </ion-button>
 </ion-content>

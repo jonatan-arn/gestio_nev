@@ -49,4 +49,18 @@ export class UsuarisService {
       }
     });
   }
+
+  delUser(user: usuaris): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.afs
+          .collection('BM_usuaris/')
+          .doc(user.BM_id)
+          .delete();
+        resolve(result);
+      } catch (err) {
+        reject(err.message);
+      }
+    });
+  }
 }
