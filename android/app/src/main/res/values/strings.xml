@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GestionBlatMarket</string>
+    <string name="title_activity_main">GestionBlatMarket</string>
+    <string name="package_name">com.blatmarket.gestion</string>
+    <string name="custom_url_scheme">com.blatmarket.gestion</string>
+</resources>

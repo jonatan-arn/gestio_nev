@@ -1,42 +1,57 @@
 import { Injectable } from '@angular/core';
-import { UsuarisService } from './usuaris.service';
+import { UsuarisService } from './BM_usuaris.service';
 import { Router } from '@angular/router';
 import { StoragesessionService } from './storagesession.service';
-import { usuarisToAJSON } from '../models/usuaris';
 import { AlertController } from '@ionic/angular';
+import { usuaris } from '../models/BM_usuaris';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
   constructor(
-    private api: UsuarisService,
     private router: Router,
     private StgSesion: StoragesessionService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private UsuariService: UsuarisService
   ) {}
 
   rdo = false;
-  Usuari: any;
+  Usuari: usuaris;
 
-  login(user: string, password: string) {
+  async login(email, password): Promise<boolean> {
     this.StgSesion.setSessionLoggedOut();
-    this.api.getUsuari(user).subscribe(
-      (res) => {
-        this.Usuari = usuarisToAJSON(res);
-        if (this.Usuari.length > 0) {
-          if (password == this.Usuari[0].password) {
-            let token = 'token';
-            let u = { username: user, token: token };
+    try {
+      const user = await this.UsuariService.getUsuari(email).get().toPromise();
+      if (user.size === 0) {
+        this.loginAlert();
+        return true;
+      } else {
+        this.Usuari = user.docs[0].data();
+        this.StgSesion.userLog = this.Usuari;
+        if (this.Usuari.BM_password === password) {
+          let token = 'token';
+          let u = { username: email, token: token };
+          if (
+            this.Usuari.BM_tipus === 'admin' ||
+            this.Usuari.BM_tipus == 'auditor'
+          ) {
+            this.router.navigateByUrl('/auditories');
             this.StgSesion.setSessionLogedIn(u);
-            this.router.navigateByUrl('/home');
+            return true;
           } else {
-            this.loginAlert();
+            this.StgSesion.setSessionLogedIn(u);
+            this.router.navigateByUrl('/temp');
+            return true;
           }
+        } else {
+          this.loginAlert();
+          return true;
         }
-      },
-      (err) => {}
-    );
+      }
+    } catch (error) {
+      console.log('Error->', error);
+    }
   }
 
   async loginAlert() {

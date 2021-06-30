@@ -1,0 +1,24 @@
+<!--Vista per a exportar les temperatures en pdf-->
+<ion-header>
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear">
+      <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
+    </ion-button>
+    <ion-title>Exportar Temperaturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" (click)="openCalendar()" color="secondary"
+    >Seleccionar las fechas</ion-button
+  >
+
+  <ion-button
+    fill="clear"
+    expand="full"
+    (click)="generatePDF()"
+    color="secondary"
+    disabled="{{check}}"
+    >Generar PDF</ion-button
+  >
+</ion-content>
