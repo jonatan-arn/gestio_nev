@@ -154,36 +154,52 @@
 
       <span *ngIf="pregunta.BM_tipo=='SliderNumero'">
         <span *ngFor="let slider of Arrayslider">
-          <ion-item *ngIf="slider.BM_id == pregunta.BM_id">
-            <ion-range
-              min="{{slider.BM_n1}}"
-              max="{{slider.BM_n2}}"
-              snaps
-              [(ngModel)]="slider.BM_resultat"
-              disabled="{{esView}}"
-            >
-              <ion-label slot="start" size="small">{{slider.BM_n1}}</ion-label>
-              <ion-label slot="end" size="small">{{slider.BM_n2}}</ion-label>
-            </ion-range>
-          </ion-item>
+          <span *ngIf="slider.BM_id == pregunta.BM_id">
+            <ion-item>
+              <ion-range
+                min="1"
+                max="10"
+                snaps
+                [(ngModel)]="slider.BM_resultat"
+                disabled="{{esView}}"
+              >
+                <ion-label slot="start" size="small"
+                  >{{slider.BM_n1}}</ion-label
+                >
+                <ion-label slot="end" size="small">{{slider.BM_n2}}</ion-label>
+              </ion-range>
+            </ion-item>
+          </span>
         </span>
       </span>
 
       <span *ngIf="pregunta.BM_tipo=='sliderIcono'">
-        <ion-item *ngFor="let smile of Arraysmile">
-          <ion-range
-            min="1"
-            max="10"
-            step="1"
-            value="5"
-            snaps
-            [(ngModel)]="smile.BM_resultat"
-            disabled="{{esView}}"
-          >
-            <ion-icon slot="start" size="small" name="sad-outline"></ion-icon>
-            <ion-icon slot="end" size="small" name="happy-outline"></ion-icon>
-          </ion-range>
-        </ion-item>
+        <span *ngFor="let smile of Arraysmile">
+          <span *ngIf="smile.BM_id == pregunta.BM_id">
+            <ion-item>
+              <ion-range
+                min="1"
+                max="10"
+                step="1"
+                value="5"
+                snaps
+                [(ngModel)]="smile.BM_resultat"
+                disabled="{{esView}}"
+              >
+                <ion-icon
+                  slot="start"
+                  size="small"
+                  name="sad-outline"
+                ></ion-icon>
+                <ion-icon
+                  slot="end"
+                  size="small"
+                  name="happy-outline"
+                ></ion-icon>
+              </ion-range>
+            </ion-item>
+          </span>
+        </span>
       </span>
     </ion-card>
   </ion-list>

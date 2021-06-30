@@ -39,7 +39,7 @@ export class GestioNevComponent implements OnInit {
   private alertS: boolean = false;
   private date;
   private loading;
-
+  private diaAnterior: boolean = false;
   constructor(
     private DiesService: DiesService,
     private NeveraService: NeveraService,
@@ -110,7 +110,7 @@ export class GestioNevComponent implements OnInit {
       this.usuari.BM_idLocalitat
     );
     this.localitat = localitat.docs[0].data();
-
+    console.log(this.localitat);
     this.getDies(this.neveres, this.todayDate);
     this.getYesterdayDies(this.neveres, this.yesterdayDate);
   }
@@ -130,6 +130,7 @@ export class GestioNevComponent implements OnInit {
             'Las temperaturas de ayer no estan introducidas, introducelas.'
           );
           this.alertS = true;
+          this.diaAnterior = true;
         }
       } else {
         this.check = false;
@@ -183,6 +184,8 @@ export class GestioNevComponent implements OnInit {
     this.date = date;
     //Recorre totes les neveres i executa el metode getDies amb la data del datePicker
     this.getDies(this.neveres, date);
+    this.diaAnterior = false;
+    console.log(this.diaAnterior);
   }
 
   //Metode per actualitza la temperatura introduida per el usuari a la BD
@@ -273,7 +276,7 @@ export class GestioNevComponent implements OnInit {
   }
   sendMail(temperatura) {
     let email = {
-      to: this.localitat[0].BM_Poblacio + '@blatmarket.com',
+      to: this.localitat.BM_Poblacio + '@blatmarket.com',
       cc: '',
       subject: 'Temperaturas anomalas de: ' + this.date,
       body: temperatura,

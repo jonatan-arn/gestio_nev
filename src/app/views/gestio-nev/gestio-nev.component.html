@@ -41,7 +41,11 @@
       ></ion-input>
     </ion-item>
   </ion-list>
-  <ion-button (click)="updateTemp()" size="small" expand="block"
+  <ion-button
+    (click)="updateTemp()"
+    size="small"
+    expand="block"
+    disabled="{{ diaAnterior }}"
     >Guardar</ion-button
   >
 </ion-content>

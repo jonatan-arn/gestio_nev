@@ -160,7 +160,7 @@ export class AuditoriesTendesPage implements OnInit {
   async generatePDF(localitat: localitat, auditoria: auditories) {
     this.danger = { image: this.danger_icon, width: 20 };
     this.logo = { image: this.logoData, width: 50 };
-
+    this.preguntes.length = 0;
     const preguntesTenda =
       await this.AuditoriesService.getAllPreguntesAuditoria(auditoria);
     preguntesTenda.docs.forEach((doc) => {
@@ -226,7 +226,9 @@ export class AuditoriesTendesPage implements OnInit {
       // On a browser simply use download
       this.pdfObj.download();
     }
-    this.respostes = [];
+    console.log(this.respostes);
+    this.respostes.length = 0;
+    console.log(this.respostes);
     this.check = true;
   }
   async getAllPreguntes() {
@@ -281,6 +283,9 @@ export class AuditoriesTendesPage implements OnInit {
       });
   }
   generearaPreguntaPDF() {
+    console.log(this.respostes);
+    this.respostes.length = 0;
+    console.log(this.respostes);
     let s = '';
     console.log(this.preguntes);
     this.preguntes.forEach((res) => {
