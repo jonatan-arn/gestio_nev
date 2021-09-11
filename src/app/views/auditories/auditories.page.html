@@ -1,0 +1,50 @@
+<!--Vista de les auditories creades-->
+<ion-header>
+  <ion-toolbar>
+    <ion-button fill="clear" slot="start">
+      <ion-menu-button autoHide="false" (click)="openMenu()"></ion-menu-button>
+    </ion-button>
+    <ion-title>auditories</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item [hidden]="true">
+    <ion-label>Tienda</ion-label>
+    <ion-select
+      (ionChange)="navAuditoria($event)"
+      placeholder="Selecciona la tienda"
+      #mySelect
+      cancelText="Cancelar"
+      okText="Ok"
+    >
+      <ion-select-option
+        *ngFor="let tenda of tendes$ | async"
+        value="{{tenda.BM_ID}}"
+      >
+        {{tenda.BM_ID}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-list *ngFor="let auditoria of auditories$ | async">
+    <ion-card (tap)="doubleClick($event, auditoria)">
+      <ion-item>
+        <ion-label>
+          {{auditoria.BM_id}}
+          <p>{{auditoria.BM_nom}}</p>
+        </ion-label>
+        <ion-button
+          (click)="optionAudiotoria($event,auditoria)"
+          fill="clear"
+          *ngIf="admin==true"
+        >
+          <ion-icon name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-card>
+  </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="admin==true">
+    <ion-fab-button (click)="openAuditoria()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button> </ion-fab
+></ion-content>

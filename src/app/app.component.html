@@ -1,3 +1,76 @@
+<!--HTML del menu lateral de la app-->
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="first" contentId="main">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col class="colMenu"> <label>Menu Principal</label> </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <div *ngIf="admin == false">
+          <ion-item [routerLink]="['/temp']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Gestión de temperaturas
+            </ion-button>
+          </ion-item>
+          <ion-item [routerLink]="['/formulari']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Creación de pdf
+            </ion-button>
+          </ion-item>
+        </div>
+
+        <div *ngIf="admin == true">
+          <ion-item [routerLink]="['/auditories']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Realizar una auditoria
+            </ion-button>
+          </ion-item>
+          <ion-item [routerLink]="['/auditories-tendes']">
+            <ion-button
+              (click)="closeMenu()"
+              expand="full"
+              fill="clear"
+              shape="round"
+            >
+              Auditories de las tiendas
+            </ion-button>
+          </ion-item>
+        </div>
+        <ion-item [routerLink]="['/user-info']">
+          <ion-button
+            (click)="closeMenu()"
+            expand="full"
+            fill="clear"
+            shape="round"
+          >
+            Información Usuario
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>
