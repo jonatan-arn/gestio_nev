@@ -5,13 +5,14 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: 'AIzaSyBzwmNMlQPppkO5R6B1liK1cchq7H-ROMI',
-    authDomain: 'gestionblatmarket.firebaseapp.com',
-    projectId: 'gestionblatmarket',
-    storageBucket: 'gestionblatmarket.appspot.com',
-    messagingSenderId: '691996748740',
-    appId: '1:691996748740:web:ae9b4a606316dbb6539291',
-    measurementId: 'G-VPYLH4CENP',
+  apiKey: "AIzaSyCQazxENEEg9vLbsUOCz2A6X9OurtbpIa0",
+  authDomain: "testnev-17026.firebaseapp.com",
+  databaseURL: "https://testnev-17026-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "testnev-17026",
+  storageBucket: "testnev-17026.appspot.com",
+  messagingSenderId: "759206631391",
+  appId: "1:759206631391:web:9b1812c0fb24a1ac1f966a",
+  measurementId: "G-42CC5XRM4X"
   },
 };
 
